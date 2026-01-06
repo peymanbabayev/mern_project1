@@ -18,12 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.get("/", (req, res) => {
-  res.json({
-    message: "🚀 API is running...",
-    status: "success",
-    database:
-      mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
-  });
+  res.json({ message: "🚀 API is running...", status: "success", database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"});
 });
 
 // Products routes
@@ -31,20 +26,12 @@ app.use("/api/products", productRoutes);
 
 // 404 Not Found
 app.use((req, res) => {
-  res.status(404).json({
-    message: " Route not found",
-    status: "fail",
-    path: req.originalUrl,
-  });
+  res.status(404).json({ message: " Route not found", status: "fail", path: req.originalUrl });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
-  res.status(500).json({
-    message: "Internal server error",
-    status: "error",
-    error: process.env.NODE_ENV === "development" ? err.stack : null,
-  });
+  res.status(500).json({ message: "Internal server error", status: "error", error: process.env.NODE_ENV === "development" ? err.stack : null});
 });
 
 // Start server
