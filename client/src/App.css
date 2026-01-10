@@ -1,0 +1,40 @@
+.app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+header h1 {
+    color: #333;
+    font-size: 32px;
+    margin: 0;
+}
+
+main {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+main p {
+    font-size: 20px;
+    color: #555;
+}
+
+/* 
+``` **Saxlayın !** (Ctrl+S) --- ## ✅ **Test edin !** Browser-də `http: //localhost:5173` açın.
+
+### Görməli olduğunuz: ``` ┌─────────────────────────────────────┐ │ 🛍️ Məhsul İdarəetmə Sistemi │ └─────────────────────────────────────┘ ┌─────────────────────────────────────┐ │ Frontend hazırdır ! Backend ilə │ │ əlaqə quraq 🚀 │ └─────────────────────────────────────┘ ``` Ağ kartlar,
+bənövşəyi arxa fon,
+təmiz dizayn ! 🎨 --- ## 📁 İndi strukturunuz: ``` client/ ├── src/ │ ├── components/ ✅ Boş (tezliklə dolacaq) │ ├── pages/ ✅ Boş (tezliklə dolacaq) │ ├── services/ ✅ Boş (tezliklə dolacaq) │ ├── utils/ ✅ Boş (tezliklə dolacaq) │ ├── App.css ✅ Təmiz və sadə │ ├── App.jsx ✅ Təmizləndi │ ├── index.css ✅ Basic styles │ └── main.jsx ✅ Toxunmadıq ├── public/ ├── node_modules/ └── package.json */

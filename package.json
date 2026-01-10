@@ -1,0 +1,25 @@
+{
+  "name": "mern_project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peymanbabayev/mern_project1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peymanbabayev/mern_project1/issues"
+  },
+  "homepage": "https://github.com/peymanbabayev/mern_project1#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
