@@ -47,9 +47,7 @@ export default function EditProduct() {
                 <Card className="border-destructive">
                     <CardHeader>
                         <CardTitle className="text-destructive">Xəta</CardTitle>
-                        <CardDescription>
-                            Məhsul tapılmadı və ya yüklənmə zamanı xəta baş verdi.
-                        </CardDescription>
+                        <CardDescription>Məhsul tapılmadı və ya yüklənmə zamanı xəta baş verdi.</CardDescription>
                     </CardHeader>
                 </Card>
             </div>
@@ -60,9 +58,7 @@ export default function EditProduct() {
         <div className="max-w-2xl mx-auto py-8 px-4 animate-in slide-in-from-bottom-5 duration-500">
             <div className="mb-8 space-y-2">
                 <h1 className="text-3xl font-bold tracking-tight">Düzəliş</h1>
-                <p className="text-muted-foreground">
-                    "{product.name}" məhsulu üzərində düzəlişlər edin.
-                </p>
+                <p className="text-muted-foreground">"{product.name}" məhsulu üzərində düzəlişlər edin.</p>
             </div>
 
             <ProductForm

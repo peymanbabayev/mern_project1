@@ -11,13 +11,7 @@ export default function Products() {
     const queryClient = useQueryClient();
 
     // Fetch Products
-    const {
-        data: products,
-        isLoading,
-        isError,
-        error,
-        refetch,
-    } = useQuery({
+    const { data: products, isLoading, isError, error, refetch } = useQuery({
         queryKey: ["products"],
         queryFn: async () => {
             const response = await productService.getAll();
@@ -28,18 +22,12 @@ export default function Products() {
     // Delete Mutation
     const deleteMutation = useMutation({
         mutationFn: productService.delete,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["products"] });
-        },
-        onError: (err) => {
-            alert("Silinmə zamanı xəta baş verdi: " + err);
-        },
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+        onError: (err) => alert("Silinmə zamanı xəta baş verdi: " + err),
     });
 
     const handleDelete = (id: string) => {
-        if (window.confirm("Bu məhsulu silmək istədiyinizə əminsiniz?")) {
-            deleteMutation.mutate(id);
-        }
+        if (window.confirm("Bu məhsulu silmək istədiyinizə əminsiniz?")) deleteMutation.mutate(id);
     };
 
     if (isLoading) {
@@ -56,15 +44,11 @@ export default function Products() {
             <div className="container mx-auto py-10 px-4">
                 <Card className="border-destructive max-w-lg mx-auto">
                     <CardHeader>
-                        <CardTitle className="text-destructive flex items-center gap-2">
-                            ❌ Xəta baş verdi
-                        </CardTitle>
+                        <CardTitle className="text-destructive flex items-center gap-2">❌ Xəta baş verdi</CardTitle>
                         <CardDescription>{(error as Error).message}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                        <Button onClick={() => refetch()} variant="outline" className="w-full">
-                            Yenidən cəhd et
-                        </Button>
+                        <Button onClick={() => refetch()} variant="outline" className="w-full">Yenidən cəhd et</Button>
                     </CardFooter>
                 </Card>
             </div>
@@ -77,9 +61,7 @@ export default function Products() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
-                    <p className="text-muted-foreground">
-                        Sistemdəki bütün məhsulların idarə edilməsi
-                    </p>
+                    <p className="text-muted-foreground"> Sistemdəki bütün məhsulların idarə edilməsi</p>
                 </div>
                 <Button onClick={() => navigate("/products/new")} className="w-full sm:w-auto">
                     <Plus className="mr-2 h-4 w-4" /> Yeni Məhsul

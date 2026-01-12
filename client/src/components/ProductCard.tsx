@@ -1,14 +1,10 @@
 import { Edit, Trash2, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/services/products/product.service";
+import config from "@/config/config";
 
 interface ProductCardProps {
     product: Product;
@@ -16,11 +12,15 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onDelete }: ProductCardProps) {
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat("az-AZ", {
-            style: "currency",
-            currency: "AZN",
-        }).format(price);
+    const formatPrice = (price: number) => new Intl.NumberFormat("az-AZ", { style: "currency", currency: "AZN" }).format(price);
+
+    // Şəkil URL-i əgər tam deyilsə (http/https ilə başlamırsa), server URL-i ilə birləşdir
+    const getProductImageUrl = (imagePath: string) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith("http") || imagePath.startsWith("blob:")) return imagePath;
+        // Əgər yol "/" ilə başlamırsa əlavə et
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${config.api.serverUrl}${path}`;
     };
 
     return (
@@ -29,7 +29,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                 <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                     {product.image ? (
                         <img
-                            src={product.image}
+                            src={getProductImageUrl(product.image) || ""}
                             alt={product.name}
                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
@@ -50,9 +50,9 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                     {product.name}
                 </h3>
                 {/* Description gələcəkdə əlavə oluna bilər */}
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                {/* <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                     Bu məhsul haqqında qısa məlumat (Mock description)...
-                </p>
+                </p> */}
             </CardContent>
 
             <CardFooter className="p-5 pt-0 flex gap-2">

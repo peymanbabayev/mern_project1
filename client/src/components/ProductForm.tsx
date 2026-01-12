@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { CreateProductDTO } from "@/services/products/product.service";
+import config from "@/config/config";
 
 interface ProductFormProps {
     defaultValues?: Partial<CreateProductDTO>;
@@ -13,42 +14,61 @@ interface ProductFormProps {
     buttonText?: string;
 }
 
-export default function ProductForm({
-    defaultValues,
-    onSubmit,
-    isLoading,
-    buttonText = "Yadda Saxla",
-}: ProductFormProps) {
+export default function ProductForm({ defaultValues, onSubmit, isLoading, buttonText = "Yadda Saxla" }: ProductFormProps) {
+    // Şəkil URL-i əgər tam deyilsə (http/https ilə başlamırsa), server URL-i ilə birləşdir
+    const getProductImageUrl = (imagePath: string | undefined) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith("http") || imagePath.startsWith("blob:")) return imagePath;
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${config.api.serverUrl}${path}`;
+    };
+
     const [name, setName] = useState(defaultValues?.name || "");
     const [price, setPrice] = useState(defaultValues?.price?.toString() || "");
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(defaultValues?.image || null);
+    const [imagePreview, setImagePreview] = useState<string | null>(getProductImageUrl(defaultValues?.image));
+    const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Clean up object URL on unmount to prevent memory leaks
     useEffect(() => {
-        return () => {
-            if (imagePreview && imagePreview.startsWith("blob:")) {
-                URL.revokeObjectURL(imagePreview);
-            }
-        };
+        return () => { if (imagePreview && imagePreview.startsWith("blob:")) URL.revokeObjectURL(imagePreview) };
     }, [imagePreview]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setImageFile(file);
-            const objectUrl = URL.createObjectURL(file);
-            setImagePreview(objectUrl);
+        if (file) { setImageFile(file); const objectUrl = URL.createObjectURL(file); setImagePreview(objectUrl) }
+    };
+
+    // Drag and Drop handlers
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); };
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+
+            // Check if it's an image
+            if (file.type.startsWith("image/")) {
+                setImageFile(file);
+                const objectUrl = URL.createObjectURL(file);
+                setImagePreview(objectUrl);
+            } else {
+                alert("Zəhmət olmasa yalnız şəkil faylı seçin!");
+            }
         }
     };
 
     const removeImage = () => {
         setImageFile(null);
         setImagePreview(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -58,9 +78,7 @@ export default function ProductForm({
         formData.append("name", name);
         formData.append("price", price);
 
-        if (imageFile) {
-            formData.append("image", imageFile);
-        }
+        if (imageFile) formData.append("image", imageFile);
 
         onSubmit(formData);
     };
@@ -69,28 +87,29 @@ export default function ProductForm({
         <Card className="w-full">
             <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-6 pt-6">
-                    {/* Image Upload Area */}
                     <div className="space-y-2">
                         <Label>Məhsul Şəkli</Label>
                         <div
                             className={`
                 relative flex flex-col items-center justify-center w-full h-64 
                 border-2 border-dashed rounded-lg cursor-pointer 
-                transition-colors duration-200 ease-in-out
+                transition-all duration-200 ease-in-out
                 ${imagePreview
                                     ? "border-primary/50 bg-accent/20"
-                                    : "border-muted-foreground/25 hover:bg-accent/10"
+                                    : isDragging
+                                        ? "border-primary bg-primary/5 scale-[1.02]"
+                                        : "border-muted-foreground/25 hover:bg-accent/10"
                                 }
               `}
                             onClick={() => !imagePreview && fileInputRef.current?.click()}
+                            onDragEnter={handleDragEnter}
+                            onDragLeave={handleDragLeave}
+                            onDragOver={handleDragOver}
+                            onDrop={handleDrop}
                         >
                             {imagePreview ? (
                                 <div className="relative w-full h-full p-2 group">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        className="w-full h-full object-contain rounded-md"
-                                    />
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain rounded-md" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-md m-2">
                                         <Button
                                             type="button"
@@ -118,24 +137,18 @@ export default function ProductForm({
                                 </div>
                             ) : (
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
-                                    <div className="p-4 bg-primary/10 rounded-full mb-3">
-                                        <ImageIcon className="w-8 h-8 text-primary" />
+                                    <div className={`p-4 rounded-full mb-3 transition-colors ${isDragging ? "bg-primary/20" : "bg-primary/10"}`}>
+                                        <ImageIcon className={`w-8 h-8 transition-colors ${isDragging ? "text-primary animate-bounce" : "text-primary"}`} />
                                     </div>
                                     <p className="mb-2 text-sm font-medium">
-                                        Şəkil yükləmək üçün klikləyin
+                                        {isDragging ? "Buraya buraxın..." : "Şəkil yükləmək üçün klikləyin və ya sürüşdürün"}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
                                         PNG, JPG və ya GIF (Maks. 5MB)
                                     </p>
                                 </div>
                             )}
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                            />
+                            <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                         </div>
                     </div>
 
