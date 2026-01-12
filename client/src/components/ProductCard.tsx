@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/services/products/product.service";
+import config from "@/config/config";
 
 interface ProductCardProps {
     product: Product;
@@ -13,13 +14,22 @@ interface ProductCardProps {
 export default function ProductCard({ product, onDelete }: ProductCardProps) {
     const formatPrice = (price: number) => new Intl.NumberFormat("az-AZ", { style: "currency", currency: "AZN" }).format(price);
 
+    // Şəkil URL-i əgər tam deyilsə (http/https ilə başlamırsa), server URL-i ilə birləşdir
+    const getProductImageUrl = (imagePath: string) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith("http") || imagePath.startsWith("blob:")) return imagePath;
+        // Əgər yol "/" ilə başlamırsa əlavə et
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${config.api.serverUrl}${path}`;
+    };
+
     return (
         <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-none bg-card/50 backdrop-blur-sm ring-1 ring-border/50">
             <CardHeader className="p-0">
                 <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                     {product.image ? (
                         <img
-                            src={product.image}
+                            src={getProductImageUrl(product.image) || ""}
                             alt={product.name}
                             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                             loading="lazy"
