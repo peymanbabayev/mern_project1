@@ -1,12 +1,7 @@
 import { Edit, Trash2, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Product } from "@/services/products/product.service";
 
@@ -16,12 +11,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onDelete }: ProductCardProps) {
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat("az-AZ", {
-            style: "currency",
-            currency: "AZN",
-        }).format(price);
-    };
+    const formatPrice = (price: number) => new Intl.NumberFormat("az-AZ", { style: "currency", currency: "AZN" }).format(price);
 
     return (
         <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-none bg-card/50 backdrop-blur-sm ring-1 ring-border/50">
@@ -50,9 +40,9 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
                     {product.name}
                 </h3>
                 {/* Description gələcəkdə əlavə oluna bilər */}
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                {/* <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                     Bu məhsul haqqında qısa məlumat (Mock description)...
-                </p>
+                </p> */}
             </CardContent>
 
             <CardFooter className="p-5 pt-0 flex gap-2">
