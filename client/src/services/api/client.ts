@@ -34,10 +34,7 @@ export class ApiRequestError extends Error {
 export { tokenManager };
 
 // Base request function
-const request = async <T>(
-  url: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> => {
+const request = async <T>( url: string, options: RequestInit = {}): Promise<ApiResponse<T>> => {
   try {
     // Use Request Interceptor
     const refinedOptions = requestInterceptor(options);
@@ -50,77 +47,44 @@ const request = async <T>(
     console.error("API Request Error:", error);
 
     // Re-throw if already ApiRequestError
-    if (error instanceof ApiRequestError) {
-      throw error;
-    }
+    if (error instanceof ApiRequestError) throw error;
 
     // Handle structured error from responseInterceptor
-    if (error.statusCode && error.message) {
-      throw new ApiRequestError(error.message, error.statusCode, error.data);
-    }
+    if (error.statusCode && error.message) throw new ApiRequestError(error.message, error.statusCode, error.data);
 
     // Otherwise create new ApiRequestError
-    throw new ApiRequestError(
-      error instanceof Error ? error.message : "Unknown error occurred"
-    );
+    throw new ApiRequestError(error instanceof Error ? error.message : "Unknown error occurred");
   }
 };
 
 // GET
-const get = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<ApiResponse<T>> => {
+const get = async <T>(url: string,options?: RequestInit): Promise<ApiResponse<T>> => {
   return request<T>(url, { ...options, method: "GET" });
 };
 
 // POST
-const post = async <T>(
-  url: string,
-  body?: unknown,
-  options?: RequestInit
-): Promise<ApiResponse<T>> => {
+const post = async <T>(url: string,body?: unknown,options?: RequestInit): Promise<ApiResponse<T>> => {
   const isFormData = body instanceof FormData;
-  return request<T>(url, {
-    ...options,
-    method: "POST",
-    body: isFormData ? (body as BodyInit) : JSON.stringify(body),
+  return request<T>(url, { ...options, method: "POST", body: isFormData ? (body as BodyInit) : JSON.stringify(body),
   });
 };
 
 // PUT
-const put = async <T>(
-  url: string,
-  body?: unknown,
-  options?: RequestInit
-): Promise<ApiResponse<T>> => {
+const put = async <T>(url: string,body?: unknown,options?: RequestInit): Promise<ApiResponse<T>> => {
   const isFormData = body instanceof FormData;
-  return request<T>(url, {
-    ...options,
-    method: "PUT",
-    body: isFormData ? (body as BodyInit) : JSON.stringify(body),
+  return request<T>(url, { ...options, method: "PUT", body: isFormData ? (body as BodyInit) : JSON.stringify(body),
   });
 };
 
 // PATCH
-const patch = async <T>(
-  url: string,
-  body?: unknown,
-  options?: RequestInit
-): Promise<ApiResponse<T>> => {
+const patch = async <T>(url: string,body?: unknown,options?: RequestInit): Promise<ApiResponse<T>> => {
   const isFormData = body instanceof FormData;
-  return request<T>(url, {
-    ...options,
-    method: "PATCH",
-    body: isFormData ? (body as BodyInit) : JSON.stringify(body),
+  return request<T>(url, { ...options, method: "PATCH", body: isFormData ? (body as BodyInit) : JSON.stringify(body),
   });
 };
 
 // DELETE
-const del = async <T>(
-  url: string,
-  options?: RequestInit
-): Promise<ApiResponse<T>> => {
+const del = async <T>(url: string,options?: RequestInit): Promise<ApiResponse<T>> => {
   return request<T>(url, { ...options, method: "DELETE" });
 };
 
