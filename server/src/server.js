@@ -15,10 +15,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static("uploads")); // Make uploads folder public
 
 // Routes
 app.get("/", (req, res) => {
-  res.json({ message: "🚀 API is running...", status: "success", database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"});
+  res.json({ message: "🚀 API is running...", status: "success", database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected" });
 });
 
 // Products routes
@@ -31,7 +32,7 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: "Internal server error", status: "error", error: process.env.NODE_ENV === "development" ? err.stack : null});
+  res.status(500).json({ message: "Internal server error", status: "error", error: process.env.NODE_ENV === "development" ? err.stack : null });
 });
 
 // Start server

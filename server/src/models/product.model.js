@@ -12,10 +12,10 @@ const productSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: true,
+      required: false,
     },
   },
-  { 
+  {
     timestamps: true  // createdAt and updatedAt
   }
 );
