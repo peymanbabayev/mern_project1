@@ -1,18 +1,22 @@
 import express from "express";
-import { createProduct, deleteProduct, getAllProducts, updateProduct } from "../controllers/product.controller.js";
+import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct } from "../controllers/product.controller.js";
+import upload from "../middleware/upload.js";
 
 const productRoutes = express.Router();
 
-// POST /api/v1/products - Create new product
-productRoutes.post("/", createProduct);
+// POST /api/products - Create new product
+productRoutes.post("/", upload.single("image"), createProduct);
 
-// DELETE /api/v1/products/:id - Delete product
+// GET /api/products - Get all products
+productRoutes.get("/", getAllProducts);
+
+// GET /api/products/:id - Get single product
+productRoutes.get("/:id", getProductById);
+
+// PUT /api/products/:id - Update product
+productRoutes.put("/:id", upload.single("image"), updateProduct);
+
+// DELETE /api/products/:id - Delete product
 productRoutes.delete("/:id", deleteProduct);
-
-// GET /api/v1/products - Get all products
-productRoutes.get("", getAllProducts);
-
-// PUT /api/v1/products/:id - Update product
-productRoutes.put("/:id", updateProduct);
 
 export default productRoutes;
