@@ -15,7 +15,7 @@ export interface Product {
 export interface CreateProductDTO {
   name: string;
   price: number;
-  image?: string; // string URL və ya file upload üçün istifadə edilə bilər
+  image?: string;
 }
 
 export interface UpdateProductDTO extends Partial<CreateProductDTO> {}

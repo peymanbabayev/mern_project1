@@ -16,19 +16,12 @@ export const requestInterceptor = (options: RequestInit = {}): RequestInit => {
   const headers = new Headers(options.headers);
   const token = tokenManager.get();
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
+  if (token) headers.set("Authorization", `Bearer ${token}`);
 
   // Body FormData deyilsə, JSON olaraq işarələyir
-  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
-    headers.set("Content-Type", "application/json");
-  }
+  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
 
-  return {
-    ...options,
-    headers,
-  };
+  return { ...options, headers };
 };
 
 // Response Interceptor

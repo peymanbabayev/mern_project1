@@ -1,11 +1,12 @@
 import multer from "multer";
 import path from "path";
+import config from "../config/config.js";
 
 // Storage konfiqurasiyası
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         // Faylların hara yüklənəcəyini təyin edirik
-        cb(null, "uploads/");
+        cb(null, config.upload.uploadDir + "/");
     },
     filename: (req, file, cb) => {
         // Fayl adını unikal edirik (timestamp + original name)
@@ -14,21 +15,24 @@ const storage = multer.diskStorage({
     },
 });
 
-// File filter (yalnız şəkillər)
+// File filter (yalnız icazə verilmiş fayllar)
 const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    if (config.upload.allowedFileTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error("Yalnız şəkil faylları yüklənə bilər!"), false);
+        cb(
+            new Error(
+                `Yalnız bu formatlar qəbul edilir: ${config.upload.allowedFileTypes.join(", ")}`
+            ),
+            false
+        );
     }
 };
 
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
-    },
+    limits: { fileSize: config.upload.maxFileSize },
 });
 
 export default upload;
