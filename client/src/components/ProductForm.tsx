@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { CreateProductDTO } from "@/services/products/product.service";
+import config from "@/config/config";
 
 interface ProductFormProps {
     defaultValues?: Partial<CreateProductDTO>;
@@ -14,10 +15,18 @@ interface ProductFormProps {
 }
 
 export default function ProductForm({ defaultValues, onSubmit, isLoading, buttonText = "Yadda Saxla" }: ProductFormProps) {
+    // Şəkil URL-i əgər tam deyilsə (http/https ilə başlamırsa), server URL-i ilə birləşdir
+    const getProductImageUrl = (imagePath: string | undefined) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith("http") || imagePath.startsWith("blob:")) return imagePath;
+        const path = imagePath.startsWith("/") ? imagePath : `/${imagePath}`;
+        return `${config.api.serverUrl}${path}`;
+    };
+
     const [name, setName] = useState(defaultValues?.name || "");
     const [price, setPrice] = useState(defaultValues?.price?.toString() || "");
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imagePreview, setImagePreview] = useState<string | null>(defaultValues?.image || null);
+    const [imagePreview, setImagePreview] = useState<string | null>(getProductImageUrl(defaultValues?.image));
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
