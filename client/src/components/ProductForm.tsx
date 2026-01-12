@@ -13,12 +13,7 @@ interface ProductFormProps {
     buttonText?: string;
 }
 
-export default function ProductForm({
-    defaultValues,
-    onSubmit,
-    isLoading,
-    buttonText = "Yadda Saxla",
-}: ProductFormProps) {
+export default function ProductForm({ defaultValues, onSubmit, isLoading, buttonText = "Yadda Saxla" }: ProductFormProps) {
     const [name, setName] = useState(defaultValues?.name || "");
     const [price, setPrice] = useState(defaultValues?.price?.toString() || "");
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -28,39 +23,18 @@ export default function ProductForm({
 
     // Clean up object URL on unmount to prevent memory leaks
     useEffect(() => {
-        return () => {
-            if (imagePreview && imagePreview.startsWith("blob:")) {
-                URL.revokeObjectURL(imagePreview);
-            }
-        };
+        return () => { if (imagePreview && imagePreview.startsWith("blob:")) URL.revokeObjectURL(imagePreview) };
     }, [imagePreview]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setImageFile(file);
-            const objectUrl = URL.createObjectURL(file);
-            setImagePreview(objectUrl);
-        }
+        if (file) { setImageFile(file); const objectUrl = URL.createObjectURL(file); setImagePreview(objectUrl) }
     };
 
     // Drag and Drop handlers
-    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(true);
-    };
-
-    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
-    };
-
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-    };
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); };
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); };
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => { e.preventDefault(); e.stopPropagation(); };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -85,9 +59,7 @@ export default function ProductForm({
     const removeImage = () => {
         setImageFile(null);
         setImagePreview(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -97,9 +69,7 @@ export default function ProductForm({
         formData.append("name", name);
         formData.append("price", price);
 
-        if (imageFile) {
-            formData.append("image", imageFile);
-        }
+        if (imageFile) formData.append("image", imageFile);
 
         onSubmit(formData);
     };
@@ -130,11 +100,7 @@ export default function ProductForm({
                         >
                             {imagePreview ? (
                                 <div className="relative w-full h-full p-2 group">
-                                    <img
-                                        src={imagePreview}
-                                        alt="Preview"
-                                        className="w-full h-full object-contain rounded-md"
-                                    />
+                                    <img src={imagePreview} alt="Preview" className="w-full h-full object-contain rounded-md" />
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-md m-2">
                                         <Button
                                             type="button"
@@ -173,13 +139,7 @@ export default function ProductForm({
                                     </p>
                                 </div>
                             )}
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                            />
+                            <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                         </div>
                     </div>
 
