@@ -6,7 +6,7 @@ import {
 
 // Types
 export interface ApiResponse<T> {
-  success: boolean;
+  status: "success" | "fail" | "error";
   data: T;
   message?: string;
 }

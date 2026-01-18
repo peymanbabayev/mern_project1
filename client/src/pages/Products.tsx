@@ -5,10 +5,12 @@ import { productService } from "@/services/products/product.service";
 import ProductCard from "@/components/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Products() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { user } = useAuth();
 
     // Fetch Products
     const { data: products, isLoading, isError, error, refetch } = useQuery({
@@ -63,9 +65,11 @@ export default function Products() {
                     <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
                     <p className="text-muted-foreground"> Sistemdəki bütün məhsulların idarə edilməsi</p>
                 </div>
-                <Button onClick={() => navigate("/products/new")} className="w-full sm:w-auto">
-                    <Plus className="mr-2 h-4 w-4" /> Yeni Məhsul
-                </Button>
+                {user?.role === "admin" && (
+                    <Button onClick={() => navigate("/products/new")} className="w-full sm:w-auto">
+                        <Plus className="mr-2 h-4 w-4" /> Yeni Məhsul
+                    </Button>
+                )}
             </div>
 
             {/* Grid Content */}
@@ -83,11 +87,13 @@ export default function Products() {
                 <div className="flex flex-col items-center justify-center min-h-[40vh] border-2 border-dashed rounded-lg bg-muted/50 p-8 text-center">
                     <h3 className="text-xl font-semibold">Heç bir məhsul tapılmadı 📦</h3>
                     <p className="text-muted-foreground mt-2 mb-6">
-                        Hələlik bazada məhsul yoxdur. İlk məhsulu əlavə edərək başlayın.
+                        Hələlik bazada məhsul yoxdur.
                     </p>
-                    <Button onClick={() => navigate("/products/new")} variant="secondary">
-                        <Plus className="mr-2 h-4 w-4" /> İndi Əlavə Et
-                    </Button>
+                    {user?.role === "admin" && (
+                        <Button onClick={() => navigate("/products/new")} variant="secondary">
+                            <Plus className="mr-2 h-4 w-4" /> İndi Əlavə Et
+                        </Button>
+                    )}
                 </div>
             )}
         </div>
