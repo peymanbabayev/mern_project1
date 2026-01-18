@@ -17,10 +17,16 @@ const queryClient = new QueryClient({
   },
 });
 
+import { AuthProvider } from "./context/AuthContext";
+
+// ... existing imports
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
       {/* DevTools - yalnız development-də görünür */}
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

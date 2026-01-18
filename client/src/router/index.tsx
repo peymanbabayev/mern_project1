@@ -1,13 +1,16 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import MainLayout from "@/layouts/MainLayout";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
-// Lazy loading optimization - Senior Pattern for Performance
-// Bu yanaşma tətbiqin ilkin yüklənmə sürətini artırır (Code Splitting)
+// Lazy loading optimization
 const Home = lazy(() => import("@/pages/Home"));
 const Products = lazy(() => import("@/pages/Products"));
 const AddProduct = lazy(() => import("@/pages/AddProduct"));
 const EditProduct = lazy(() => import("@/pages/EditProduct"));
+const Login = lazy(() => import("@/pages/Login"));
+const Register = lazy(() => import("@/pages/Register"));
+const Favorites = lazy(() => import("@/pages/Favorites"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -30,6 +33,22 @@ export const router = createBrowserRouter([
                 ),
             },
             {
+                path: "login",
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <Login />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "register",
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <Register />
+                    </Suspense>
+                ),
+            },
+            {
                 path: "products",
                 element: (
                     <Suspense fallback={<PageLoader />}>
@@ -38,19 +57,33 @@ export const router = createBrowserRouter([
                 ),
             },
             {
+                path: "favorites",
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Favorites />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            {
                 path: "products/new",
                 element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <AddProduct />
-                    </Suspense>
+                    <ProtectedRoute adminOnly>
+                        <Suspense fallback={<PageLoader />}>
+                            <AddProduct />
+                        </Suspense>
+                    </ProtectedRoute>
                 ),
             },
             {
                 path: "products/edit/:id",
                 element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <EditProduct />
-                    </Suspense>
+                    <ProtectedRoute adminOnly>
+                        <Suspense fallback={<PageLoader />}>
+                            <EditProduct />
+                        </Suspense>
+                    </ProtectedRoute>
                 ),
             },
         ],

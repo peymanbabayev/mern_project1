@@ -19,7 +19,7 @@ export const API_ENDPOINTS = {
 
   //   USERS
   USERS: {
-    BASE: `${API_BASE_URL}/users`,
-    BY_ID: (id: string) => `${API_BASE_URL}/users/${id}`,
+    BASE: `${API_BASE_URL}/user`,
+    FAVORITES: `${API_BASE_URL}/user/favorites`,
   },
 };
