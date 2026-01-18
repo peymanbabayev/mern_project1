@@ -1,0 +1,102 @@
+import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+import config from "../config/config.js";
+
+const generateToken = (id) => {
+    return jwt.sign({ id }, config.jwt.secret, {
+        expiresIn: config.jwt.expiresIn,
+    });
+};
+
+export const register = async (req, res) => {
+    const { name, username, email, password } = req.body;
+
+    try {
+        const userExists = await User.findOne({ $or: [{ email }, { username }] });
+
+        if (userExists) {
+            return res.status(400).json({
+                message: "User already exists",
+                status: "fail",
+            });
+        }
+
+        const user = await User.create({
+            name,
+            username,
+            email,
+            password,
+        });
+
+        if (user) {
+            res.status(201).json({
+                message: "User registered successfully",
+                status: "success",
+                data: {
+                    _id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    token: generateToken(user._id),
+                },
+            });
+        } else {
+            res.status(400).json({ message: "Invalid user data", status: "fail" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message, status: "error" });
+    }
+};
+
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        console.log(`[LOGIN ATTEMPT] Email: ${email}`);
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            console.log("[LOGIN FAILED] User not found");
+            return res.status(401).json({ message: "Invalid email or password", status: "fail" });
+        }
+
+        const isMatch = await user.matchPassword(password);
+        console.log(`[LOGIN DEBUG] Password match result: ${isMatch}`);
+
+        if (isMatch) {
+            res.json({
+                message: "Login successful",
+                status: "success",
+                data: {
+                    _id: user._id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    favorites: user.favorites,
+                    token: generateToken(user._id),
+                },
+            });
+        } else {
+            console.log("[LOGIN FAILED] Password incorrect");
+            res.status(401).json({ message: "Invalid email or password", status: "fail" });
+        }
+    } catch (error) {
+        console.error("[LOGIN ERROR]", error);
+        res.status(500).json({ message: error.message, status: "error" });
+    }
+};
+
+export const getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).populate("favorites");
+        res.json({
+            message: "User found",
+            status: "success",
+            data: user
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message, status: "error" });
+    }
+};

@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import config, { validateConfig } from "./config/config.js";
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/product.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 // Validate configuration
 validateConfig();
@@ -28,6 +30,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {next()});
 app.use("/uploads", express.static(config.upload.uploadDir)); // Make uploads folder public
 
 // Routes
@@ -35,6 +38,10 @@ app.get("/", (req, res) => {
   res.json({ message: "🚀 API is running...", status: "success", database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected" });
 });
 
+// Auth Routes
+app.use("/api/auth", authRoutes);
+// User Routes
+app.use("/api/user", userRoutes);
 // Products routes
 app.use("/api/products", productRoutes);
 
