@@ -20,6 +20,12 @@ const productSchema = new mongoose.Schema(
   }
 );
 
+// İndexlər - Sorğuların sürətini artırır
+productSchema.index({ name: 1 }); // Ad üzrə axtarış üçün
+productSchema.index({ createdAt: -1 }); // Tarix üzrə sıralama üçün
+productSchema.index({ price: 1 }); // Qiymət üzrə filter üçün
+
+
 const Product = mongoose.model("Product", productSchema);
 
 export default Product;

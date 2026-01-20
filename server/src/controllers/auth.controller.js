@@ -54,7 +54,8 @@ export const login = async (req, res) => {
 
     try {
         console.log(`[LOGIN ATTEMPT] Email: ${email}`);
-        const user = await User.findOne({ email });
+        // Yalnız lazım olan sahələri seç (performance optimization)
+        const user = await User.findOne({ email }).select('+password'); // password default olaraq exclude olunur
 
         if (!user) {
             console.log("[LOGIN FAILED] User not found");
@@ -90,7 +91,16 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate("favorites");
+        // .lean() - Plain JS obyektləri qaytarır (sürətli)
+        // .select() - Password-u exclude edir
+        const user = await User.findById(req.user._id)
+            .select('-password') // Password-u göndərmə
+            .populate({
+                path: 'favorites',
+                select: 'name price image' // Favorites-də yalnız lazım olan sahələr
+            })
+            .lean();
+
         res.json({
             message: "User found",
             status: "success",
