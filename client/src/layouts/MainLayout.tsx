@@ -46,7 +46,7 @@ export default function MainLayout() {
     return (
         <div className="min-h-screen bg-background">
             <Navbar />
-            <main className="container mx-auto p-4 md:p-8">
+            <main className="container mx-auto px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8">
                 <Outlet />
             </main>
         </div>
