@@ -9,9 +9,17 @@ const generateToken = (id) => {
 };
 
 export const register = async (req, res) => {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, role = "user" } = req.body;
 
     try {
+        // Rol validasiyası
+        if (role && !["user", "admin"].includes(role)) {
+            return res.status(400).json({
+                message: "Invalid role. Must be 'user' or 'admin'",
+                status: "fail",
+            });
+        }
+
         const userExists = await User.findOne({ $or: [{ email }, { username }] });
 
         if (userExists) {
@@ -26,6 +34,7 @@ export const register = async (req, res) => {
             username,
             email,
             password,
+            role,
         });
 
         if (user) {

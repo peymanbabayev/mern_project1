@@ -5,12 +5,14 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 
 export default function Register() {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState("user");
     const [error, setError] = useState("");
     const { register } = useAuth();
     const navigate = useNavigate();
@@ -19,7 +21,7 @@ export default function Register() {
         e.preventDefault();
         setError("");
         try {
-            await register({ name, username, email, password });
+            await register({ name, username, email, password, role });
             navigate("/");
         } catch (err: any) {
             setError(err.message || "Registration failed");
@@ -85,6 +87,18 @@ export default function Register() {
                                 required
                                 className="h-10 md:h-11 text-sm md:text-base"
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="role" className="text-sm md:text-base">Rol</Label>
+                            <Select value={role} onValueChange={setRole}>
+                                <SelectTrigger className="h-10 md:h-11 text-sm md:text-base">
+                                    <SelectValue placeholder="Rol seçin" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="user">İstifadəçi</SelectItem>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                         <Button type="submit" className="w-full h-10 md:h-11 text-sm md:text-base font-medium">
                             Qeydiyyatdan keç
