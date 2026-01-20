@@ -27,70 +27,75 @@ export default function Register() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[80vh]">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl text-center">Register</CardTitle>
-                    <CardDescription className="text-center">
-                        Create a new account
+        <div className="flex items-center justify-center min-h-[70vh] md:min-h-[80vh] px-4 py-6">
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader className="space-y-1 pb-4">
+                    <CardTitle className="text-xl md:text-2xl text-center font-bold">Qeydiyyat</CardTitle>
+                    <CardDescription className="text-center text-sm md:text-base">
+                        Yeni hesab yaradın
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+                <CardContent className="px-4 md:px-6">
+                    <form onSubmit={handleSubmit} className="space-y-3.5 md:space-y-4">
+                        {error && <div className="text-red-500 text-xs md:text-sm text-center p-2 bg-red-50 rounded-md">{error}</div>}
                         <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
+                            <Label htmlFor="name" className="text-sm md:text-base">Ad Soyad</Label>
                             <Input
                                 id="name"
                                 type="text"
-                                placeholder="John Doe"
+                                placeholder="Adınız Soyadınız"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="username">Username</Label>
+                            <Label htmlFor="username" className="text-sm md:text-base">İstifadəçi adı</Label>
                             <Input
                                 id="username"
                                 type="text"
-                                placeholder="johndoe"
+                                placeholder="istifadechi_adi"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-sm md:text-base">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="m@example.com"
+                                placeholder="ornek@email.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-sm md:text-base">Şifrə</Label>
                             <Input
                                 id="password"
                                 type="password"
+                                placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Register
+                        <Button type="submit" className="w-full h-10 md:h-11 text-sm md:text-base font-medium">
+                            Qeydiyyatdan keç
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="justify-center">
-                    <p className="text-sm text-gray-500">
-                        Already have an account?{" "}
-                        <Link to="/login" className="text-blue-500 hover:underline">
-                            Login
+                <CardFooter className="justify-center pt-4">
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                        Artıq hesabınız var?{" "}
+                        <Link to="/login" className="text-primary font-medium hover:underline">
+                            Daxil olun
                         </Link>
                     </p>
                 </CardFooter>
