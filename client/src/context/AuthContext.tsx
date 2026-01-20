@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService, type User } from "../services/auth/auth.service";
 import { tokenManager } from "../services/api/interceptors";
 
@@ -15,43 +16,58 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const queryClient = useQueryClient();
 
-    const refreshUser = async () => {
-        try {
-            const response = await authService.getCurrentUser();
-            if (response.status === "success") {
-                // response.data IS the user object (based on getMe controller)
-                setUser(response.data);
+    // React Query ilə user data-nı cache-lə
+    const { data: user = null, refetch } = useQuery({
+        queryKey: ["currentUser"],
+        queryFn: async () => {
+            const token = tokenManager.get();
+            if (!token) return null;
+
+            try {
+                const response = await authService.getCurrentUser();
+                if (response.status === "success") {
+                    return response.data;
+                }
+                return null;
+            } catch (error) {
+                console.error("Failed to fetch user", error);
+                return null;
             }
-        } catch (error) {
-            console.error("Failed to refresh user", error);
-        }
-    };
+        },
+        staleTime: 10 * 60 * 1000, // 10 dəqiqə - user data fresh sayılır
+        gcTime: 30 * 60 * 1000, // 30 dəqiqə - cache-də saxlanılır
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        enabled: !!tokenManager.get(), // Token varsa query işləsin
+    });
 
     useEffect(() => {
-        const initAuth = async () => {
-            const token = tokenManager.get();
-            if (token) {
-                await refreshUser();
-            }
+        // İlk yükləmə bitdikdən sonra loading-i false et
+        const token = tokenManager.get();
+        if (token) {
+            refetch().finally(() => setLoading(false));
+        } else {
             setLoading(false);
-        };
+        }
+    }, [refetch]);
 
-        initAuth();
-    }, []);
+    const refreshUser = async () => {
+        await refetch();
+    };
 
     const login = async (credentials: any) => {
         try {
             const response = await authService.login(credentials);
             if (response.status === "success") {
-                // response.data should contain user and token
                 const { token, ...userData } = response.data;
 
                 if (token) {
                     tokenManager.set(token);
-                    setUser(userData);
+                    // User data-nı cache-ə yaz
+                    queryClient.setQueryData(["currentUser"], userData);
                 }
             } else {
                 throw new Error(response.message);
@@ -69,7 +85,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
                 if (token) {
                     tokenManager.set(token);
-                    setUser(userData);
+                    // User data-nı cache-ə yaz
+                    queryClient.setQueryData(["currentUser"], userData);
                 }
             } else {
                 throw new Error(response.message);
@@ -81,7 +98,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const logout = () => {
         tokenManager.remove();
-        setUser(null);
+        // Cache-i təmizlə
+        queryClient.setQueryData(["currentUser"], null);
+        queryClient.clear(); // Bütün cache-i təmizlə
         window.location.href = "/login";
     };
 

@@ -44,19 +44,25 @@ const userSchema = new mongoose.Schema(
     }
 );
 
+// İndexlər - Auth sorğularının sürətini artırır
+userSchema.index({ email: 1 }); // Login üçün
+userSchema.index({ username: 1 }); // Username ilə axtarış üçün
+userSchema.index({ role: 1 }); // Role-based queries üçün
+userSchema.index({ createdAt: -1 }); // Tarix üzrə sıralama üçün
+
+
 // Hash password before saving
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
     if (!this.isModified("password")) {
-        return next();
+        return;
     }
 
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-        next();
     } catch (error) {
         console.error("Error hashing password:", error);
-        next(error);
+        throw error;
     }
 });
 

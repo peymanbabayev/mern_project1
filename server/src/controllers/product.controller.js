@@ -1,10 +1,17 @@
 import mongoose from "mongoose";
 import Product from "../models/product.model.js";
 
-// Get all products
+// Get all products (Optimized)
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        // .lean() - Plain JS obyektləri qaytarır (Mongoose document-dən daha sürətli)
+        // .select() - Yalnız lazım olan sahələri seçir
+        // .sort() - Ən yeni məhsulları əvvəl göstərir
+        const products = await Product.find()
+            .select('name price image createdAt updatedAt') // Yalnız lazım olan sahələr
+            .sort({ createdAt: -1 }) // Ən yeniləri əvvəl
+            .lean(); // Sürəti 2-3 dəfə artırır
+
         res.status(200).json({ status: "success", message: "Products fetched successfully", data: products });
     } catch (error) {
         console.error("Məhsulları alırken xəta:", error.message);
@@ -44,8 +51,8 @@ export const createProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: "Şəkil yüklənməlidir" });
         }
 
-        // Construct image URL
-        const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+        // Construct image URL (Relative path)
+        const imageUrl = `/uploads/${req.file.filename}`;
 
         // Validation
         if (!name || !price) {
@@ -91,7 +98,7 @@ export const updateProduct = async (req, res) => {
 
         // If new image is uploaded, update the URL
         if (req.file) {
-            updateData.image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+            updateData.image = `/uploads/${req.file.filename}`;
         }
 
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
