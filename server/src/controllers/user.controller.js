@@ -38,7 +38,15 @@ export const toggleFavorite = async (req, res) => {
 
 export const getFavorites = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate('favorites');
+        const user = await User.findById(req.user._id)
+            .select('favorites') // Yalnız favorites sahəsini seç
+            .populate({
+                path: 'favorites',
+                select: 'name price image createdAt', // Yalnız lazım olan sahələr
+                options: { sort: { createdAt: -1 } } // Ən yeniləri əvvəl
+            })
+            .lean();
+
         if (!user) {
             return res.status(404).json({ message: "User not found", status: "fail" });
         }

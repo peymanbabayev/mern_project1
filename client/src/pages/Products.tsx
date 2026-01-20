@@ -12,13 +12,16 @@ export default function Products() {
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
-    // Fetch Products
+    // Fetch Products with Caching Strategy
     const { data: products, isLoading, isError, error, refetch } = useQuery({
         queryKey: ["products"],
         queryFn: async () => {
             const response = await productService.getAll();
             return response.data;
         },
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
     });
 
     // Delete Mutation
@@ -34,9 +37,24 @@ export default function Products() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <p className="text-muted-foreground animate-pulse">Məhsullar yüklənir...</p>
+            <div className="space-y-8">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
+                        <p className="text-muted-foreground">Sistemdəki bütün məhsulların idarə edilməsi</p>
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {[...Array(8)].map((_, i) => (
+                        <Card key={i} className="overflow-hidden">
+                            <div className="aspect-square bg-muted animate-pulse" />
+                            <CardHeader>
+                                <div className="h-6 bg-muted rounded animate-pulse mb-2" />
+                                <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
+                            </CardHeader>
+                        </Card>
+                    ))}
+                </div>
             </div>
         );
     }
