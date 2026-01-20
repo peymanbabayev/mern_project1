@@ -25,48 +25,51 @@ export default function Login() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[80vh]">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl text-center">Login</CardTitle>
-                    <CardDescription className="text-center">
-                        Enter your email and password to access your account
+        <div className="flex items-center justify-center min-h-[70vh] md:min-h-[80vh] px-4">
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader className="space-y-1 pb-4">
+                    <CardTitle className="text-xl md:text-2xl text-center font-bold">Giriş</CardTitle>
+                    <CardDescription className="text-center text-sm md:text-base">
+                        Hesabınıza daxil olmaq üçün email və şifrənizi daxil edin
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-4 md:px-6">
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+                        {error && <div className="text-red-500 text-xs md:text-sm text-center p-2 bg-red-50 rounded-md">{error}</div>}
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="text-sm md:text-base">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="m@example.com"
+                                placeholder="ornek@email.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-sm md:text-base">Şifrə</Label>
                             <Input
                                 id="password"
                                 type="password"
+                                placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                className="h-10 md:h-11 text-sm md:text-base"
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Login
+                        <Button type="submit" className="w-full h-10 md:h-11 text-sm md:text-base font-medium">
+                            Daxil ol
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="justify-center">
-                    <p className="text-sm text-gray-500">
-                        Don't have an account?{" "}
-                        <Link to="/register" className="text-blue-500 hover:underline">
-                            Register
+                <CardFooter className="justify-center pt-4">
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                        Hesabınız yoxdur?{" "}
+                        <Link to="/register" className="text-primary font-medium hover:underline">
+                            Qeydiyyatdan keçin
                         </Link>
                     </p>
                 </CardFooter>

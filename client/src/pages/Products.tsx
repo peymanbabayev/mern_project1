@@ -37,20 +37,20 @@ export default function Products() {
 
     if (isLoading) {
         return (
-            <div className="space-y-8">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-6 md:space-y-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
-                        <p className="text-muted-foreground">Sistemdəki bütün məhsulların idarə edilməsi</p>
+                        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Məhsullar</h1>
+                        <p className="text-sm md:text-base text-muted-foreground mt-1">Sistemdəki bütün məhsulların idarə edilməsi</p>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                     {[...Array(8)].map((_, i) => (
                         <Card key={i} className="overflow-hidden">
-                            <div className="aspect-square bg-muted animate-pulse" />
-                            <CardHeader>
-                                <div className="h-6 bg-muted rounded animate-pulse mb-2" />
-                                <div className="h-4 bg-muted rounded animate-pulse w-2/3" />
+                            <div className="aspect-square md:aspect-square bg-muted animate-pulse" />
+                            <CardHeader className="p-4 md:p-6">
+                                <div className="h-5 md:h-6 bg-muted rounded animate-pulse mb-2" />
+                                <div className="h-3 md:h-4 bg-muted rounded animate-pulse w-2/3" />
                             </CardHeader>
                         </Card>
                     ))}
@@ -61,11 +61,11 @@ export default function Products() {
 
     if (isError) {
         return (
-            <div className="container mx-auto py-10 px-4">
+            <div className="container mx-auto py-6 md:py-10 px-4">
                 <Card className="border-destructive max-w-lg mx-auto">
                     <CardHeader>
-                        <CardTitle className="text-destructive flex items-center gap-2">❌ Xəta baş verdi</CardTitle>
-                        <CardDescription>{(error as Error).message}</CardDescription>
+                        <CardTitle className="text-destructive flex items-center gap-2 text-lg md:text-xl">❌ Xəta baş verdi</CardTitle>
+                        <CardDescription className="text-sm md:text-base">{(error as Error).message}</CardDescription>
                     </CardHeader>
                     <CardFooter>
                         <Button onClick={() => refetch()} variant="outline" className="w-full">Yenidən cəhd et</Button>
@@ -76,15 +76,19 @@ export default function Products() {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
+        <div className="space-y-6 md:space-y-8 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
-                    <p className="text-muted-foreground"> Sistemdəki bütün məhsulların idarə edilməsi</p>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Məhsullar</h1>
+                    <p className="text-sm md:text-base text-muted-foreground mt-1">Sistemdəki bütün məhsulların idarə edilməsi</p>
                 </div>
                 {user?.role === "admin" && (
-                    <Button onClick={() => navigate("/products/new")} className="w-full sm:w-auto">
+                    <Button
+                        onClick={() => navigate("/products/new")}
+                        className="w-full sm:w-auto shrink-0"
+                        size="default"
+                    >
                         <Plus className="mr-2 h-4 w-4" /> Yeni Məhsul
                     </Button>
                 )}
@@ -92,7 +96,7 @@ export default function Products() {
 
             {/* Grid Content */}
             {products && products.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
                     {products.map((product) => (
                         <ProductCard
                             key={product._id}
@@ -102,9 +106,9 @@ export default function Products() {
                     ))}
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center min-h-[40vh] border-2 border-dashed rounded-lg bg-muted/50 p-8 text-center">
-                    <h3 className="text-xl font-semibold">Heç bir məhsul tapılmadı 📦</h3>
-                    <p className="text-muted-foreground mt-2 mb-6">
+                <div className="flex flex-col items-center justify-center min-h-[40vh] border-2 border-dashed rounded-lg bg-muted/50 p-6 md:p-8 text-center">
+                    <h3 className="text-lg md:text-xl font-semibold">Heç bir məhsul tapılmadı 📦</h3>
+                    <p className="text-sm md:text-base text-muted-foreground mt-2 mb-4 md:mb-6">
                         Hələlik bazada məhsul yoxdur.
                     </p>
                     {user?.role === "admin" && (
