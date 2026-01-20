@@ -62,7 +62,7 @@ export default function Home() {
 
                     <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
                         Müasir Məhsul İdarəetmə Sistemi (PMS) ilə işiniz daha sürətli və rahat olacaq.
-                        Bütün məlumatlar parmaqlarınızın ucunda.
+                        Bütün məlumatlar barmaqlarınızın ucunda.
                     </p>
 
                     <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-3 text-left">
