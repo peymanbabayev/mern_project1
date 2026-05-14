@@ -45,8 +45,6 @@ const userSchema = new mongoose.Schema(
 );
 
 // İndexlər - Auth sorğularının sürətini artırır
-userSchema.index({ email: 1 }); // Login üçün
-userSchema.index({ username: 1 }); // Username ilə axtarış üçün
 userSchema.index({ role: 1 }); // Role-based queries üçün
 userSchema.index({ createdAt: -1 }); // Tarix üzrə sıralama üçün
 
