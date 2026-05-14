@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 
-// Load environment variables
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config();
+}
 
 /**
  * Server configuration object
