@@ -2,18 +2,8 @@ import multer from "multer";
 import path from "path";
 import config from "../config/config.js";
 
-// Storage konfiqurasiyası
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        // Faylların hara yüklənəcəyini təyin edirik
-        cb(null, config.upload.uploadDir + "/");
-    },
-    filename: (req, file, cb) => {
-        // Fayl adını unikal edirik (timestamp + original name)
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    },
-});
+// Şəkilləri serverin diskində deyil, RAM-da (MemoryStorage) saxlayırıq
+const storage = multer.memoryStorage();
 
 // File filter (yalnız icazə verilmiş fayllar)
 const fileFilter = (req, file, cb) => {

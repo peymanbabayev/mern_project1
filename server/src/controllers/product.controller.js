@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Product from "../models/product.model.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 
 // Get all products (Optimized)
 export const getAllProducts = async (req, res) => {
@@ -51,8 +52,9 @@ export const createProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: "Şəkil yüklənməlidir" });
         }
 
-        // Construct image URL (Relative path)
-        const imageUrl = `/uploads/${req.file.filename}`;
+        // Upload image to Cloudinary from memory buffer
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer);
+        const imageUrl = cloudinaryResult.secure_url;
 
         // Validation
         if (!name || !price) {
@@ -96,9 +98,10 @@ export const updateProduct = async (req, res) => {
     try {
         let updateData = { name, price };
 
-        // If new image is uploaded, update the URL
+        // If new image is uploaded, update the URL via Cloudinary
         if (req.file) {
-            updateData.image = `/uploads/${req.file.filename}`;
+            const cloudinaryResult = await uploadToCloudinary(req.file.buffer);
+            updateData.image = cloudinaryResult.secure_url;
         }
 
         const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
