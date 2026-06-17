@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, Home, Package, PlusCircle, Heart, LogOut, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, Home, Package, PlusCircle, Heart, LogOut, LogIn, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 
@@ -33,10 +33,16 @@ export default function Navbar() {
                         Məhsullar
                     </Link>
                     {user?.role === "admin" && (
-                        <Link to="/products/new" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
-                            <PlusCircle className="w-4 h-4" />
-                            Yeni Məhsul
-                        </Link>
+                        <>
+                            <Link to="/products/new" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
+                                <PlusCircle className="w-4 h-4" />
+                                Yeni Məhsul
+                            </Link>
+                            <Link to="/admin/users" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
+                                <Users className="w-4 h-4" />
+                                Admin Panel
+                            </Link>
+                        </>
                     )}
                 </nav>
 
@@ -121,14 +127,24 @@ export default function Navbar() {
                                     <span className="font-medium">Favoritlər</span>
                                 </Link>
                                 {user?.role === "admin" && (
-                                    <Link
-                                        to="/products/new"
-                                        onClick={closeMobileMenu}
-                                        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-                                    >
-                                        <PlusCircle className="w-5 h-5" />
-                                        <span className="font-medium">Yeni Məhsul</span>
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to="/products/new"
+                                            onClick={closeMobileMenu}
+                                            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                                        >
+                                            <PlusCircle className="w-5 h-5" />
+                                            <span className="font-medium">Yeni Məhsul</span>
+                                        </Link>
+                                        <Link
+                                            to="/admin/users"
+                                            onClick={closeMobileMenu}
+                                            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                                        >
+                                            <Users className="w-5 h-5" />
+                                            <span className="font-medium">Admin Panel</span>
+                                        </Link>
+                                    </>
                                 )}
                                 <div className="border-t my-2"></div>
                                 <div className="px-4 py-2 text-sm text-muted-foreground">

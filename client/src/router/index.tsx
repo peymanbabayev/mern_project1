@@ -11,6 +11,7 @@ const EditProduct = lazy(() => import("@/pages/EditProduct"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const Favorites = lazy(() => import("@/pages/Favorites"));
+const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -69,7 +70,7 @@ export const router = createBrowserRouter([
             {
                 path: "products/new",
                 element: (
-                    <ProtectedRoute adminOnly>
+                    <ProtectedRoute allowedRoles={["admin", "manager", "vendor"]}>
                         <Suspense fallback={<PageLoader />}>
                             <AddProduct />
                         </Suspense>
@@ -79,9 +80,19 @@ export const router = createBrowserRouter([
             {
                 path: "products/edit/:id",
                 element: (
-                    <ProtectedRoute adminOnly>
+                    <ProtectedRoute allowedRoles={["admin", "manager", "vendor"]}>
                         <Suspense fallback={<PageLoader />}>
                             <EditProduct />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "admin/users",
+                element: (
+                    <ProtectedRoute allowedRoles={["admin"]}>
+                        <Suspense fallback={<PageLoader />}>
+                            <AdminUsers />
                         </Suspense>
                     </ProtectedRoute>
                 ),

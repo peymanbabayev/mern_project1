@@ -9,17 +9,9 @@ const generateToken = (id) => {
 };
 
 export const register = async (req, res) => {
-    const { name, username, email, password, role = "user" } = req.body;
+    const { name, username, email, password } = req.body;
 
     try {
-        // Rol validasiyası
-        if (role && !["user", "admin"].includes(role)) {
-            return res.status(400).json({
-                message: "Invalid role. Must be 'user' or 'admin'",
-                status: "fail",
-            });
-        }
-
         const userExists = await User.findOne({ $or: [{ email }, { username }] });
 
         if (userExists) {
@@ -34,12 +26,13 @@ export const register = async (req, res) => {
             username,
             email,
             password,
-            role,
+            role: "user",
+            status: "pending"
         });
 
         if (user) {
             res.status(201).json({
-                message: "User registered successfully",
+                message: "User registered successfully. Please wait for admin approval.",
                 status: "success",
                 data: {
                     _id: user._id,
@@ -47,7 +40,7 @@ export const register = async (req, res) => {
                     username: user.username,
                     email: user.email,
                     role: user.role,
-                    token: generateToken(user._id),
+                    status: user.status
                 },
             });
         } else {
@@ -75,6 +68,10 @@ export const login = async (req, res) => {
         console.log(`[LOGIN DEBUG] Password match result: ${isMatch}`);
 
         if (isMatch) {
+            if (user.status !== "approved") {
+                return res.status(403).json({ message: "Account pending approval or rejected", status: "fail" });
+            }
+
             res.json({
                 message: "Login successful",
                 status: "success",
@@ -84,6 +81,7 @@ export const login = async (req, res) => {
                     username: user.username,
                     email: user.email,
                     role: user.role,
+                    status: user.status,
                     favorites: user.favorites,
                     token: generateToken(user._id),
                 },

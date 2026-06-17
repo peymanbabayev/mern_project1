@@ -80,17 +80,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const register = async (userDataInput: any) => {
         try {
             const response = await authService.register(userDataInput);
-            if (response.status === "success") {
-                const { token, ...userData } = response.data;
-
-                if (token) {
-                    tokenManager.set(token);
-                    // User data-nı cache-ə yaz
-                    queryClient.setQueryData(["currentUser"], userData);
-                }
-            } else {
+            if (response.status !== "success") {
                 throw new Error(response.message);
             }
+            // Məlumat: Backend qeydiyyatdan sonra dərhal token qaytarmır,
+            // çünki istifadəçi 'pending' statusundadır və admin təsdiqini gözləməlidir.
         } catch (error) {
             throw error;
         }
