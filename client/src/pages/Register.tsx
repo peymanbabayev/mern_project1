@@ -5,24 +5,27 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 
 export default function Register() {
     const [name, setName] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("user");
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const { register } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+        setSuccessMessage("");
         try {
-            await register({ name, username, email, password, role });
-            navigate("/");
+            await register({ name, username, email, password });
+            setSuccessMessage("Qeydiyyat uğurludur. Zəhmət olmasa admin təsdiqini gözləyin.");
+            setTimeout(() => {
+                navigate("/login");
+            }, 3000);
         } catch (err: any) {
             setError(err.message || "Registration failed");
         }
@@ -39,7 +42,8 @@ export default function Register() {
                 </CardHeader>
                 <CardContent className="px-4 md:px-6">
                     <form onSubmit={handleSubmit} className="space-y-3.5 md:space-y-4">
-                        {error && <div className="text-red-500 text-xs md:text-sm text-center p-2 bg-red-50 rounded-md">{error}</div>}
+                        {error && <div className="text-red-500 text-xs md:text-sm text-center p-2 bg-red-50 rounded-md border border-red-100">{error}</div>}
+                        {successMessage && <div className="text-green-600 text-xs md:text-sm text-center p-2 bg-green-50 rounded-md border border-green-100">{successMessage}</div>}
                         <div className="space-y-2">
                             <Label htmlFor="name" className="text-sm md:text-base">Ad Soyad</Label>
                             <Input
@@ -87,18 +91,6 @@ export default function Register() {
                                 required
                                 className="h-10 md:h-11 text-sm md:text-base"
                             />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="role" className="text-sm md:text-base">Rol</Label>
-                            <Select value={role} onValueChange={setRole}>
-                                <SelectTrigger className="h-10 md:h-11 text-sm md:text-base">
-                                    <SelectValue placeholder="Rol seçin" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="user">İstifadəçi</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
                         <Button type="submit" className="w-full h-10 md:h-11 text-sm md:text-base font-medium">
                             Qeydiyyatdan keç

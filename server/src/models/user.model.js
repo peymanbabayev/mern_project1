@@ -29,8 +29,13 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["user", "admin"],
+            enum: ["admin", "manager", "data_entry", "vendor", "user"],
             default: "user",
+        },
+        status: {
+            type: String,
+            enum: ["pending", "approved", "rejected"],
+            default: "pending",
         },
         favorites: [
             {
