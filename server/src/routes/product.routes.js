@@ -1,9 +1,12 @@
 import express from "express";
-import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct } from "../controllers/product.controller.js";
+import { createProduct, deleteProduct, getAllProducts, getProductById, updateProduct, getProductStats } from "../controllers/product.controller.js";
 import upload from "../middleware/upload.js";
 import { protect, authorizeRoles } from "../middleware/auth.middleware.js";
 
 const productRoutes = express.Router();
+
+// GET /api/products/stats - Get product statistics
+productRoutes.get("/stats", getProductStats);
 
 // POST /api/products - Create new product
 productRoutes.post("/", protect, authorizeRoles("admin", "manager", "vendor"), upload.single("image"), createProduct);

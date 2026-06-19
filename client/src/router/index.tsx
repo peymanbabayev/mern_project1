@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import MainLayout from "@/layouts/MainLayout";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Lazy loading optimization
@@ -23,14 +23,16 @@ const PageLoader = () => (
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <MainLayout />,
+        element: <DashboardLayout />,
         children: [
             {
                 index: true,
                 element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Home />
-                    </Suspense>
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Home />
+                        </Suspense>
+                    </ProtectedRoute>
                 ),
             },
             {
@@ -52,9 +54,11 @@ export const router = createBrowserRouter([
             {
                 path: "products",
                 element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Products />
-                    </Suspense>
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Products />
+                        </Suspense>
+                    </ProtectedRoute>
                 ),
             },
             {
