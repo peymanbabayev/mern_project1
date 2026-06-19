@@ -20,6 +20,42 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
+// Get product statistics for dashboard
+export const getProductStats = async (req, res) => {
+    try {
+        const totalProducts = await Product.countDocuments();
+        
+        // Aggregate to get total value and average price
+        const stats = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalValue: { $sum: "$price" },
+                    avgPrice: { $avg: "$price" }
+                }
+            }
+        ]);
+
+        const recentProducts = await Product.find()
+            .select('name price image createdAt')
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .lean();
+
+        const data = {
+            totalProducts,
+            totalValue: stats.length > 0 ? stats[0].totalValue : 0,
+            avgPrice: stats.length > 0 ? stats[0].avgPrice : 0,
+            recentProducts
+        };
+
+        res.status(200).json({ status: "success", data });
+    } catch (error) {
+        console.error("Statistika alınarkən xəta:", error.message);
+        res.status(500).json({ status: "error", message: "Server xətası" });
+    }
+};
+
 // Get single product by ID
 export const getProductById = async (req, res) => {
     const { id } = req.params;

@@ -26,6 +26,11 @@ export const productService = {
     return await apiClient.get<Product[]>(API_ENDPOINTS.PRODUCTS.BASE);
   },
 
+  // Get product stats
+  getStats: async () => {
+    return await apiClient.get<any>(`${API_ENDPOINTS.PRODUCTS.BASE}/stats`);
+  },
+
   // Get single product
   getById: async (id: string) => {
     return await apiClient.get<Product>(API_ENDPOINTS.PRODUCTS.BY_ID(id));
