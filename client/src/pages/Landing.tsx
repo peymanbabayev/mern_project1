@@ -341,9 +341,7 @@ export default function Landing() {
             top: 0,
             behavior: "smooth",
           })}>
-            <span className="mark">
-              <span />
-            </span>{" "}
+            <img src="/pms-favicon.png" alt="PMS Logo" style={{ width: "28px", height: "28px", borderRadius: "8px", objectFit: "cover", display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />{" "}
             PMS</a>
 
           <nav className="primary-nav" aria-label="Əsas naviqasiya">
@@ -820,9 +818,7 @@ export default function Landing() {
           <div className="footer-top">
             <div>
               <a className="logo">
-                <span className="mark">
-                  <span />
-                </span>{" "}
+                <img src="/pms-favicon.png" alt="PMS Logo" style={{ width: "28px", height: "28px", borderRadius: "8px", objectFit: "cover", display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />{" "}
                 PMS
               </a>
               <p>

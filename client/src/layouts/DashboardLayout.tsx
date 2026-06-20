@@ -83,11 +83,14 @@ export default function DashboardLayout() {
                 <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-border/50">
                     {sidebarOpen && (
                         <Link to="/app" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2 overflow-hidden whitespace-nowrap animate-in fade-in">
-                            🛍️ PMS
+                            <img src="/pms-favicon.png" alt="PMS Logo" className="w-7 h-7 rounded-lg object-cover" />
+                            {sidebarOpen && <span>PMS</span>}
                         </Link>
                     )}
                     {!sidebarOpen && (
-                        <Link to="/app" className="mx-auto text-xl" title="PMS">🛍️</Link>
+                        <Link to="/app" className="mx-auto" title="PMS">
+                            <img src="/pms-favicon.png" alt="PMS Logo" className="w-8 h-8 rounded-lg object-cover" />
+                        </Link>
                     )}
                 </div>
                 
@@ -147,7 +150,8 @@ export default function DashboardLayout() {
             >
                 <div className="h-16 flex items-center justify-between px-6 border-b border-sidebar-border/50">
                     <Link to="/app" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2">
-                        🛍️ PMS
+                        <img src="/pms-favicon.png" alt="PMS Logo" className="w-7 h-7 rounded-lg object-cover" />
+                        PMS
                     </Link>
                     <button onClick={() => setMobileMenuOpen(false)} className="text-sidebar-foreground/80 hover:text-sidebar-foreground">
                         <X className="w-6 h-6" />
