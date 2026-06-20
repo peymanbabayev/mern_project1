@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { productService } from "@/services/products/product.service";
 import { 
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Home() {
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     // Fetch stats using React Query
     const { data: statsData, isLoading, isError } = useQuery({
@@ -56,7 +57,7 @@ export default function Home() {
                 </div>
                 {user?.role === "admin" && (
                     <Button className="relative z-10 shadow-md" asChild>
-                        <Link to="/products/new">
+                        <Link to="/app/products/new">
                             <PlusCircle className="w-4 h-4 mr-2" />
                             Yeni Məhsul
                         </Link>
@@ -88,7 +89,9 @@ export default function Home() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{formatCurrency(statsData?.totalValue)}</div>
+                        <div className="text-2xl font-bold">
+                            {statsData?.totalValue !== undefined ? formatCurrency(statsData.totalValue) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">Bütün aktiv məhsullar</p>
                     </CardContent>
                 </Card>
@@ -100,7 +103,9 @@ export default function Home() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{formatCurrency(statsData?.avgPrice)}</div>
+                        <div className="text-2xl font-bold">
+                            {statsData?.avgPrice !== undefined ? formatCurrency(statsData.avgPrice) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">Kataloq üzrə</p>
                     </CardContent>
                 </Card>
@@ -131,7 +136,7 @@ export default function Home() {
                                 <CardDescription>Kataloqa daxil edilən ən yeni 5 məhsul</CardDescription>
                             </div>
                             <Button variant="outline" size="sm" asChild>
-                                <Link to="/products">Hamısına bax</Link>
+                                <Link to="/app/products">Hamısına bax</Link>
                             </Button>
                         </div>
                     </CardHeader>
@@ -142,7 +147,7 @@ export default function Home() {
                                     <thead className="text-xs text-muted-foreground bg-muted/30 uppercase">
                                         <tr>
                                             <th className="px-6 py-4 font-medium">Məhsul</th>
-                                            <th className="px-6 py-4 font-medium">Qiymət</th>
+                                            <th className="px-6 py-4 font-medium">Satış Qiyməti</th>
                                             <th className="px-6 py-4 font-medium">Tarix</th>
                                             <th className="px-6 py-4 font-medium text-right">Status</th>
                                         </tr>
@@ -162,7 +167,7 @@ export default function Home() {
                                                         <span className="font-medium text-foreground">{product.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 font-medium">{formatCurrency(product.price)}</td>
+                                                <td className="px-6 py-4 font-medium text-primary">{formatCurrency(product.salePrice ?? 0)}</td>
                                                 <td className="px-6 py-4 text-muted-foreground flex items-center gap-2">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {new Date(product.createdAt).toLocaleDateString('az-AZ')}
@@ -191,7 +196,7 @@ export default function Home() {
                         <CardTitle className="text-lg">Sürətli Əməliyyatlar</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 space-y-4">
-                        <div className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
+                        <div onClick={() => navigate("/app/products")} className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                                     <ShoppingBag className="w-5 h-5 text-primary group-hover:text-current" />
@@ -203,7 +208,7 @@ export default function Home() {
                             </div>
                         </div>
                         {user?.role === "admin" && (
-                            <div className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
+                            <div onClick={() => navigate("/app/admin/users")} className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
                                 <div className="flex items-center gap-4">
                                     <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                         <Users className="w-5 h-5 text-blue-600 group-hover:text-current" />

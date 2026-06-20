@@ -54,12 +54,14 @@ export default function DashboardLayout() {
 
     // Nav items
     const navItems = [
-        { path: "/", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
-        { path: "/products", label: "Məhsullar", icon: <Package className="w-5 h-5" /> },
-        ...(isAuthenticated ? [{ path: "/favorites", label: "Favoritlər", icon: <Heart className="w-5 h-5" /> }] : []),
+        { path: "/app", label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
+        { path: "/app/products", label: "Məhsullar", icon: <Package className="w-5 h-5" /> },
+        ...(isAuthenticated ? [{ path: "/app/favorites", label: "Favoritlər", icon: <Heart className="w-5 h-5" /> }] : []),
+        ...(user?.role === "admin" || user?.role === "viewer" || user?.role === "owner" || user?.role === "accountant" ? [
+            { path: "/app/products/new", label: "Yeni Məhsul", icon: <PlusCircle className="w-5 h-5" /> },
+        ] : []),
         ...(user?.role === "admin" ? [
-            { path: "/products/new", label: "Yeni Məhsul", icon: <PlusCircle className="w-5 h-5" /> },
-            { path: "/admin/users", label: "Admin Panel", icon: <Users className="w-5 h-5" /> }
+            { path: "/app/admin/users", label: "İstifadəçilər", icon: <Users className="w-5 h-5" /> }
         ] : []),
     ];
 
@@ -76,22 +78,22 @@ export default function DashboardLayout() {
         <div className="flex h-screen bg-background overflow-hidden">
             {/* Desktop Sidebar */}
             <aside 
-                className={`${sidebarOpen ? 'w-64' : 'w-20'} hidden md:flex flex-col transition-all duration-300 ease-in-out border-r bg-sidebar text-sidebar-foreground z-20 shadow-xl`}
+                className={`relative ${sidebarOpen ? 'w-64' : 'w-20'} hidden md:flex flex-col transition-all duration-300 ease-in-out border-r bg-sidebar text-sidebar-foreground z-20 shadow-xl`}
             >
                 <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-border/50">
                     {sidebarOpen && (
-                        <Link to="/" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2 overflow-hidden whitespace-nowrap animate-in fade-in">
-                            🛍️ Enterprise PMS
+                        <Link to="/app" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2 overflow-hidden whitespace-nowrap animate-in fade-in">
+                            🛍️ PMS
                         </Link>
                     )}
                     {!sidebarOpen && (
-                        <Link to="/" className="mx-auto text-xl" title="PMS">🛍️</Link>
+                        <Link to="/app" className="mx-auto text-xl" title="PMS">🛍️</Link>
                     )}
                 </div>
                 
                 <div className="flex-1 py-6 flex flex-col gap-2 px-3 overflow-y-auto">
                     {navItems.map((item) => {
-                        const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path));
+                        const isActive = location.pathname === item.path || (item.path !== "/app" && location.pathname.startsWith(item.path));
                         return (
                             <Link
                                 key={item.path}
@@ -126,7 +128,7 @@ export default function DashboardLayout() {
                 {/* Sidebar Toggle Button */}
                 <button 
                     onClick={() => setSidebarOpen(!sidebarOpen)}
-                    className="absolute -right-3 top-20 bg-sidebar-primary text-sidebar-primary-foreground rounded-full p-1 shadow-lg hover:bg-primary transition-colors border border-background"
+                    className="absolute -right-3 top-20 z-50 bg-sidebar-primary text-sidebar-primary-foreground rounded-full p-1 shadow-lg hover:bg-primary transition-colors border border-background"
                 >
                     <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${!sidebarOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -144,7 +146,7 @@ export default function DashboardLayout() {
                 }`}
             >
                 <div className="h-16 flex items-center justify-between px-6 border-b border-sidebar-border/50">
-                    <Link to="/" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2">
+                    <Link to="/app" className="text-xl font-bold tracking-tight text-sidebar-primary-foreground flex items-center gap-2">
                         🛍️ PMS
                     </Link>
                     <button onClick={() => setMobileMenuOpen(false)} className="text-sidebar-foreground/80 hover:text-sidebar-foreground">
@@ -154,7 +156,7 @@ export default function DashboardLayout() {
                 
                 <div className="py-6 flex flex-col gap-2 px-4 overflow-y-auto">
                     {navItems.map((item) => {
-                        const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(item.path));
+                        const isActive = location.pathname === item.path || (item.path !== "/app" && location.pathname.startsWith(item.path));
                         return (
                             <Link
                                 key={item.path}
@@ -222,7 +224,7 @@ export default function DashboardLayout() {
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+                <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 lg:p-8">
                     <div className="max-w-7xl mx-auto w-full animate-in fade-in duration-500">
                         <Outlet />
                     </div>

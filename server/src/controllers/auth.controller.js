@@ -9,7 +9,7 @@ const generateToken = (id) => {
 };
 
 export const register = async (req, res) => {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password, role } = req.body;
 
     try {
         const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -21,18 +21,25 @@ export const register = async (req, res) => {
             });
         }
 
+        const assignedRole = role || "viewer";
+        const assignedStatus = assignedRole === "viewer" ? "approved" : "pending";
+
         const user = await User.create({
             name,
             username,
             email,
             password,
-            role: "user",
-            status: "pending"
+            role: assignedRole,
+            status: assignedStatus
         });
 
         if (user) {
+            const successMessage = assignedStatus === "approved" 
+                ? "User registered successfully." 
+                : "User registered successfully. Please wait for admin approval.";
+
             res.status(201).json({
-                message: "User registered successfully. Please wait for admin approval.",
+                message: successMessage,
                 status: "success",
                 data: {
                     _id: user._id,

@@ -1,13 +1,15 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Lazy loading optimization
+const Landing = lazy(() => import("@/pages/Landing"));
 const Home = lazy(() => import("@/pages/Home"));
 const Products = lazy(() => import("@/pages/Products"));
 const AddProduct = lazy(() => import("@/pages/AddProduct"));
 const EditProduct = lazy(() => import("@/pages/EditProduct"));
+const AuthLayout = lazy(() => import("@/layouts/AuthLayout"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const Favorites = lazy(() => import("@/pages/Favorites"));
@@ -21,8 +23,46 @@ const PageLoader = () => (
 );
 
 export const router = createBrowserRouter([
+    // ── PUBLIC: Landing Page ──────────────────────────────────────
     {
         path: "/",
+        element: (
+            <Suspense fallback={<PageLoader />}>
+                <Landing />
+            </Suspense>
+        ),
+    },
+
+    // ── AUTH: Login / Register ────────────────────────────────────
+    {
+        element: (
+            <Suspense fallback={<PageLoader />}>
+                <AuthLayout />
+            </Suspense>
+        ),
+        children: [
+            {
+                path: "/login",
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <Login />
+                    </Suspense>
+                ),
+            },
+            {
+                path: "/register",
+                element: (
+                    <Suspense fallback={<PageLoader />}>
+                        <Register />
+                    </Suspense>
+                ),
+            },
+        ],
+    },
+
+    // ── APP: Protected Dashboard (all inside /app) ────────────────
+    {
+        path: "/app",
         element: <DashboardLayout />,
         children: [
             {
@@ -33,22 +73,6 @@ export const router = createBrowserRouter([
                             <Home />
                         </Suspense>
                     </ProtectedRoute>
-                ),
-            },
-            {
-                path: "login",
-                element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Login />
-                    </Suspense>
-                ),
-            },
-            {
-                path: "register",
-                element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Register />
-                    </Suspense>
                 ),
             },
             {
@@ -74,7 +98,7 @@ export const router = createBrowserRouter([
             {
                 path: "products/new",
                 element: (
-                    <ProtectedRoute allowedRoles={["admin", "manager", "vendor"]}>
+                    <ProtectedRoute allowedRoles={["admin", "viewer", "owner", "accountant"]}>
                         <Suspense fallback={<PageLoader />}>
                             <AddProduct />
                         </Suspense>
@@ -84,7 +108,7 @@ export const router = createBrowserRouter([
             {
                 path: "products/edit/:id",
                 element: (
-                    <ProtectedRoute allowedRoles={["admin", "manager", "vendor"]}>
+                    <ProtectedRoute allowedRoles={["admin", "viewer", "owner"]}>
                         <Suspense fallback={<PageLoader />}>
                             <EditProduct />
                         </Suspense>
@@ -102,5 +126,11 @@ export const router = createBrowserRouter([
                 ),
             },
         ],
+    },
+
+    // Catch-all redirect
+    {
+        path: "*",
+        element: <Navigate to="/" replace />,
     },
 ]);

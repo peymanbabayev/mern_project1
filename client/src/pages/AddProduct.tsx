@@ -11,7 +11,8 @@ export default function AddProduct() {
         mutationFn: productService.create,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["products"] });
-            navigate("/products");
+            queryClient.invalidateQueries({ queryKey: ["productStats"] });
+            navigate("/app/products");
         },
         onError: (error) => {
             console.error("Error creating product:", error);

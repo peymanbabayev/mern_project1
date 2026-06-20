@@ -7,7 +7,7 @@ export interface User {
   name: string;
   username: string;
   email: string;
-  role: "admin" | "manager" | "data_entry" | "vendor" | "user";
+  role: "admin" | "owner" | "accountant" | "sales_manager" | "sales_rep" | "purchasing" | "warehouse" | "viewer";
   status: "pending" | "approved" | "rejected";
   favorites?: string[]; // Array of Product IDs
 }

@@ -24,7 +24,9 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
     };
 
     const [name, setName] = useState(defaultValues?.name || "");
-    const [price, setPrice] = useState(defaultValues?.price?.toString() || "");
+    const [costPrice, setCostPrice] = useState(defaultValues?.costPrice?.toString() || "");
+    const [salePrice, setSalePrice] = useState(defaultValues?.salePrice?.toString() || "");
+    const [stockCount, setStockCount] = useState(defaultValues?.stockCount?.toString() || "");
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(getProductImageUrl(defaultValues?.image));
     const [isDragging, setIsDragging] = useState(false);
@@ -76,7 +78,9 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
 
         const formData = new FormData();
         formData.append("name", name);
-        formData.append("price", price);
+        formData.append("costPrice", costPrice);
+        formData.append("salePrice", salePrice);
+        formData.append("stockCount", stockCount);
 
         if (imageFile) formData.append("image", imageFile);
 
@@ -166,23 +170,58 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
                             />
                         </div>
 
-                        {/* Price Input */}
+                        {/* Cost Price Input */}
                         <div className="space-y-2">
-                            <Label htmlFor="price">Qiymət (AZN) <span className="text-destructive">*</span></Label>
+                            <Label htmlFor="costPrice">Maya Dəyəri (AZN) <span className="text-destructive">*</span></Label>
                             <div className="relative">
                                 <Input
-                                    id="price"
+                                    id="costPrice"
                                     type="number"
                                     placeholder="0.00"
                                     step="0.01"
                                     min="0"
-                                    value={price}
-                                    onChange={(e) => setPrice(e.target.value)}
+                                    value={costPrice}
+                                    onChange={(e) => setCostPrice(e.target.value)}
                                     required
                                     className="pl-8 bg-background"
                                 />
                                 <span className="absolute left-3 top-2.5 text-muted-foreground font-semibold">₼</span>
                             </div>
+                        </div>
+
+                        {/* Sale Price Input */}
+                        <div className="space-y-2">
+                            <Label htmlFor="salePrice">Satış Qiyməti (AZN) <span className="text-destructive">*</span></Label>
+                            <div className="relative">
+                                <Input
+                                    id="salePrice"
+                                    type="number"
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    min="0"
+                                    value={salePrice}
+                                    onChange={(e) => setSalePrice(e.target.value)}
+                                    required
+                                    className="pl-8 bg-background"
+                                />
+                                <span className="absolute left-3 top-2.5 text-muted-foreground font-semibold">₼</span>
+                            </div>
+                        </div>
+
+                        {/* Stock Count Input */}
+                        <div className="space-y-2">
+                            <Label htmlFor="stockCount">Stokdakı Sayı <span className="text-destructive">*</span></Label>
+                            <Input
+                                id="stockCount"
+                                type="number"
+                                placeholder="0"
+                                step="1"
+                                min="0"
+                                value={stockCount}
+                                onChange={(e) => setStockCount(e.target.value)}
+                                required
+                                className="bg-background"
+                            />
                         </div>
                     </div>
                 </CardContent>
