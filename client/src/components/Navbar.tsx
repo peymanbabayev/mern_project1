@@ -19,7 +19,8 @@ export default function Navbar() {
                     className="text-xl md:text-2xl font-bold tracking-tight hover:text-primary transition-colors flex items-center gap-2"
                     onClick={closeMobileMenu}
                 >
-                    🛍️ <span className="hidden xs:inline">PMS</span>
+                    <img src="/pms-favicon.png" alt="PMS Logo" className="w-7 h-7 rounded-lg object-cover" />
+                    <span className="hidden xs:inline">PMS</span>
                 </Link>
 
                 {/* Desktop Navigation */}

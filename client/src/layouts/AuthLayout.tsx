@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, ShieldCheck, Zap, Layers, Activity } from "lucide-react";
+import { ShieldCheck, Zap, Layers, Activity } from "lucide-react";
 
 const LOGIN_CONTENT = {
     title: (
@@ -64,7 +64,7 @@ export default function AuthLayout() {
 
                 <div className="relative z-10 flex items-center gap-3 cursor-pointer group" onClick={() => navigate("/")}>
                     <div className="p-2 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
-                        <ShoppingBag className="w-7 h-7 text-primary" />
+                        <img src="/pms-favicon.png" alt="PMS Logo" className="w-9 h-9 rounded-lg object-cover" />
                     </div>
                     <span className="text-2xl font-black tracking-tight text-white">Enterprise PMS</span>
                 </div>
@@ -115,7 +115,7 @@ export default function AuthLayout() {
             <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative overflow-y-auto bg-background/95">
                 {/* Mobile Logo */}
                 <div className="absolute top-8 left-8 flex lg:hidden items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-                    <ShoppingBag className="w-6 h-6 text-primary" />
+                    <img src="/pms-favicon.png" alt="PMS Logo" className="w-6 h-6 rounded-md object-cover" />
                     <span className="text-xl font-bold tracking-tight text-foreground">PMS</span>
                 </div>
 
