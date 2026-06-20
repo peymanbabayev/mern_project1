@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Search, ArrowUpDown, MoreHorizontal, Edit, Trash2, Image as ImageIcon } from "lucide-react";
+import { Plus, Search, ArrowUpDown, Edit, Trash2, Image as ImageIcon, Heart } from "lucide-react";
 import { productService, type Product, } from "@/services/products/product.service";
+import { userService } from "@/services/user/user.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
@@ -10,7 +11,7 @@ import { useAuth } from "@/context/AuthContext";
 export default function Products() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [searchTerm, setSearchTerm] = useState("");
     const [sortConfig, setSortConfig] = useState<{ key: keyof Product | null, direction: 'asc' | 'desc' }>({ key: 'createdAt', direction: 'desc' });
 
@@ -35,6 +36,19 @@ export default function Products() {
 
     const handleDelete = (id: string) => {
         if (window.confirm("Bu məhsulu silmək istədiyinizə əminsiniz?")) deleteMutation.mutate(id);
+    };
+
+    const handleToggleFavorite = async (e: React.MouseEvent, productId: string) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            await userService.toggleFavorite(productId);
+            await refreshUser();
+            queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+            queryClient.invalidateQueries({ queryKey: ["favorites"] });
+        } catch (error) {
+            console.error("Failed to toggle favorite", error);
+        }
     };
 
     const handleSort = (key: keyof Product) => {
@@ -100,8 +114,8 @@ export default function Products() {
                     <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">Məhsullar</h1>
                     <p className="text-sm md:text-base text-muted-foreground mt-1">Sistemdəki bütün məhsulların siyahısı və idarə edilməsi.</p>
                 </div>
-                {user?.role === "admin" && (
-                    <Button onClick={() => navigate("/products/new")} className="w-full sm:w-auto relative z-10 shadow-md">
+                {(user?.role === "admin" || user?.role === "viewer" || user?.role === "owner" || user?.role === "accountant") && (
+                    <Button onClick={() => navigate("/app/products/new")} className="w-full sm:w-auto relative z-10 shadow-md">
                         <Plus className="mr-2 h-4 w-4" /> Yeni Məhsul
                     </Button>
                 )}
@@ -173,20 +187,27 @@ export default function Products() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            {user?.role === "admin" ? (
-                                                <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50" onClick={() => navigate(`/products/edit/${product._id}`)}>
-                                                        <Edit className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(product._id)}>
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                                                    <MoreHorizontal className="h-4 w-4" />
+                                            <div className="flex items-center justify-end gap-2 opacity-100 transition-opacity">
+                                                <Button 
+                                                    variant="ghost" 
+                                                    size="icon" 
+                                                    className="h-8 w-8 text-red-400 hover:text-red-500 hover:bg-red-50" 
+                                                    onClick={(e) => handleToggleFavorite(e, product._id)}
+                                                    title={user?.favorites?.some((f: any) => (typeof f === 'string' ? f : f._id) === product._id) ? "Favoritlərdən sil" : "Favoritlərə əlavə et"}
+                                                >
+                                                    <Heart className={`h-4 w-4 ${user?.favorites?.some((f: any) => (typeof f === 'string' ? f : f._id) === product._id) ? 'fill-current text-red-500' : ''}`} />
                                                 </Button>
-                                            )}
+                                                {(user?.role === "admin" || user?.role === "viewer" || user?.role === "owner") && (
+                                                    <>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50" onClick={() => navigate(`/app/products/edit/${product._id}`)}>
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(product._id)}>
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         // Cache-i təmizlə
         queryClient.setQueryData(["currentUser"], null);
         queryClient.clear(); // Bütün cache-i təmizlə
-        window.location.href = "/login";
+        window.location.href = "/";
     };
 
     return (
