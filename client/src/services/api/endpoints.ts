@@ -22,4 +22,11 @@ export const API_ENDPOINTS = {
     BASE: `${API_BASE_URL}/user`,
     FAVORITES: `${API_BASE_URL}/user/favorites`,
   },
+
+  //   ADMIN
+  ADMIN: {
+    PENDING_USERS: `${API_BASE_URL}/user/pending`,
+    USER_STATUS: (id: string) => `${API_BASE_URL}/user/${id}/status`,
+    USER_ROLE: (id: string) => `${API_BASE_URL}/user/${id}/role`,
+  },
 };

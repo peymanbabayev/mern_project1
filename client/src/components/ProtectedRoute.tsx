@@ -3,10 +3,10 @@ import { Navigate } from "react-router-dom";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
-    adminOnly?: boolean;
+    allowedRoles?: string[];
 }
 
-const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     const { user, isAuthenticated, loading } = useAuth();
 
     if (loading) {
@@ -21,8 +21,8 @@ const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) =>
         return <Navigate to="/login" replace />;
     }
 
-    if (adminOnly && user?.role !== "admin") {
-        return <Navigate to="/" replace />;
+    if (allowedRoles && user && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/app" replace />;
     }
 
     return <>{children}</>;

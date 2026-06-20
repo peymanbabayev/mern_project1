@@ -1,88 +1,227 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { ShoppingBag, Sparkles } from "lucide-react";
+import { productService } from "@/services/products/product.service";
+import { 
+    Package, DollarSign, TrendingUp, ShoppingBag, 
+    ArrowUpRight, Users, Activity, Clock, PlusCircle
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
-    const { loading } = useAuth();
-    const [showSplash, setShowSplash] = useState(true);
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
-    // Splash screen timer
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowSplash(false);
-        }, 2500); // 2.5 saniyə splash ekranı görünür
+    // Fetch stats using React Query
+    const { data: statsData, isLoading, isError } = useQuery({
+        queryKey: ["productStats"],
+        queryFn: async () => {
+            const response = await productService.getStats();
+            return response.data;
+        },
+        staleTime: 60 * 1000, // 1 minute
+    });
 
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Splash Screen UI
-    if (showSplash || loading) {
+    if (isLoading) {
         return (
-            <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background/95 backdrop-blur-xl animate-in fade-in duration-700 px-4">
-                <div className="relative mb-6 md:mb-8">
-                    <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse"></div>
-                    <ShoppingBag className="relative w-20 h-20 md:w-24 md:h-24 text-primary animate-bounce duration-1000" />
-                </div>
-
-                <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500 animate-pulse">
-                    PMS
-                </h1>
-
-                <p className="mt-4 md:mt-6 text-lg sm:text-xl md:text-2xl font-medium text-muted-foreground animate-in slide-in-from-bottom-4 fade-in duration-1000 delay-300 text-center">
-                    Məhsul İdarəetmə Sistemi
-                </p>
-
-                <div className="mt-6 md:mt-8 flex gap-2">
-                    <span className="w-3 h-3 rounded-full bg-primary animate-ping delay-0"></span>
-                    <span className="w-3 h-3 rounded-full bg-primary animate-ping delay-150"></span>
-                    <span className="w-3 h-3 rounded-full bg-primary animate-ping delay-300"></span>
-                </div>
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
         );
     }
 
-    // Actual Home Content (Only visible if authenticated)
+    if (isError) {
+        return (
+            <div className="p-6 bg-destructive/10 text-destructive rounded-lg border border-destructive/20 max-w-2xl mx-auto mt-10">
+                <h3 className="text-lg font-bold mb-2">Məlumatları yükləmək mümkün olmadı</h3>
+                <p>Zəhmət olmasa səhifəni yeniləyin və ya daha sonra yenidən cəhd edin.</p>
+            </div>
+        );
+    }
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('az-AZ', { style: 'currency', currency: 'AZN' }).format(amount || 0);
+    };
+
     return (
-        <div className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-[85vh] p-4 text-center animate-in zoom-in-95 duration-700">
-            <div className="relative max-w-4xl w-full">
-                {/* Background decorative elements */}
-                <div className="absolute -top-10 md:-top-20 -left-10 md:-left-20 w-48 h-48 md:w-72 md:h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-10 md:-bottom-20 -right-10 md:-right-20 w-48 h-48 md:w-72 md:h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-
-                <div className="relative bg-card/50 backdrop-blur-sm border shadow-2xl rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 overflow-hidden">
-                    <div className="flex justify-center mb-4 md:mb-6">
-                        <div className="p-2.5 md:p-3 bg-primary/10 rounded-xl md:rounded-2xl">
-                            <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-primary" />
-                        </div>
-                    </div>
-
-                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight mb-4 md:mb-6 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-                        Xoş Gəlmisiniz!
+        <div className="space-y-8 pb-8">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-card p-6 rounded-2xl border shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                <div className="relative z-10 space-y-1">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                        Xoş Gəldiniz, {user?.name}
                     </h1>
-
-                    <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
-                        Müasir Məhsul İdarəetmə Sistemi (PMS) ilə işiniz daha sürətli və rahat olacaq.
-                        Bütün məlumatlar barmaqlarınızın ucunda.
-                    </p>
-
-                    <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-3 text-left">
-                        <div className="group p-5 md:p-6 rounded-xl md:rounded-2xl bg-background border hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
-                            <div className="text-2xl mb-2">🚀</div>
-                            <h3 className="font-semibold text-base md:text-lg mb-2">Sürətli</h3>
-                            <p className="text-xs md:text-sm text-muted-foreground">Anında məlumat yenilənməsi və sürətli interfeys.</p>
-                        </div>
-                        <div className="group p-5 md:p-6 rounded-xl md:rounded-2xl bg-background border hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
-                            <div className="text-2xl mb-2">🛡️</div>
-                            <h3 className="font-semibold text-base md:text-lg mb-2">Təhlükəsiz</h3>
-                            <p className="text-xs md:text-sm text-muted-foreground">Məlumatlarınızın təhlükəsizliyi bizim üçün prioritetdir.</p>
-                        </div>
-                        <div className="group p-5 md:p-6 rounded-xl md:rounded-2xl bg-background border hover:border-primary/50 transition-colors shadow-sm hover:shadow-md">
-                            <div className="text-2xl mb-2">❤️</div>
-                            <h3 className="font-semibold text-base md:text-lg mb-2">Rahat</h3>
-                            <p className="text-xs md:text-sm text-muted-foreground">İstifadəçi dostu dizayn və favoritlər funksiyası.</p>
-                        </div>
-                    </div>
+                    <p className="text-muted-foreground">Budur biznesinizin bugünkü xülasəsi.</p>
                 </div>
+                {user?.role === "admin" && (
+                    <Button className="relative z-10 shadow-md" asChild>
+                        <Link to="/app/products/new">
+                            <PlusCircle className="w-4 h-4 mr-2" />
+                            Yeni Məhsul
+                        </Link>
+                    </Button>
+                )}
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                <Card className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Ümumi Məhsul</CardTitle>
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                            <Package className="h-4 w-4 text-primary" />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{statsData?.totalProducts || 0}</div>
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            <span className="text-green-500 flex items-center"><ArrowUpRight className="w-3 h-3"/> +2%</span> ötən aydan
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Ümumi Dəyər</CardTitle>
+                        <div className="p-2 bg-green-500/10 rounded-lg">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {statsData?.totalValue !== undefined ? formatCurrency(statsData.totalValue) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Bütün aktiv məhsullar</p>
+                    </CardContent>
+                </Card>
+                <Card className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Ortalama Qiymət</CardTitle>
+                        <div className="p-2 bg-blue-500/10 rounded-lg">
+                            <TrendingUp className="h-4 w-4 text-blue-600" />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {statsData?.avgPrice !== undefined ? formatCurrency(statsData.avgPrice) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Kataloq üzrə</p>
+                    </CardContent>
+                </Card>
+                <Card className="hover:shadow-md transition-shadow">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Sistem Statusu</CardTitle>
+                        <div className="p-2 bg-indigo-500/10 rounded-lg">
+                            <Activity className="h-4 w-4 text-indigo-600" />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-green-600">Aktiv</div>
+                        <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                            Bütün xidmətlər normaldır
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Recent Activity and Products */}
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+                {/* Recent Products Table */}
+                <Card className="lg:col-span-2 shadow-sm border-border/50 overflow-hidden">
+                    <CardHeader className="border-b bg-muted/20 pb-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-lg">Son Əlavə Edilən Məhsullar</CardTitle>
+                                <CardDescription>Kataloqa daxil edilən ən yeni 5 məhsul</CardDescription>
+                            </div>
+                            <Button variant="outline" size="sm" asChild>
+                                <Link to="/app/products">Hamısına bax</Link>
+                            </Button>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        {statsData?.recentProducts && statsData.recentProducts.length > 0 ? (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="text-xs text-muted-foreground bg-muted/30 uppercase">
+                                        <tr>
+                                            <th className="px-6 py-4 font-medium">Məhsul</th>
+                                            <th className="px-6 py-4 font-medium">Satış Qiyməti</th>
+                                            <th className="px-6 py-4 font-medium">Tarix</th>
+                                            <th className="px-6 py-4 font-medium text-right">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {statsData.recentProducts.map((product: any) => (
+                                            <tr key={product._id} className="hover:bg-muted/10 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        {product.image ? (
+                                                            <img src={product.image} alt={product.name} className="w-10 h-10 rounded-md object-cover border" />
+                                                        ) : (
+                                                            <div className="w-10 h-10 rounded-md bg-muted flex items-center justify-center border">
+                                                                <ShoppingBag className="w-5 h-5 text-muted-foreground" />
+                                                            </div>
+                                                        )}
+                                                        <span className="font-medium text-foreground">{product.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 font-medium text-primary">{formatCurrency(product.salePrice ?? 0)}</td>
+                                                <td className="px-6 py-4 text-muted-foreground flex items-center gap-2">
+                                                    <Clock className="w-3.5 h-3.5" />
+                                                    {new Date(product.createdAt).toLocaleDateString('az-AZ')}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                                        Aktiv
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="p-8 text-center text-muted-foreground">
+                                Hələ heç bir məhsul əlavə edilməyib.
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Quick Actions / Info Card */}
+                <Card className="shadow-sm border-border/50">
+                    <CardHeader className="border-b bg-muted/20 pb-4">
+                        <CardTitle className="text-lg">Sürətli Əməliyyatlar</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 space-y-4">
+                        <div onClick={() => navigate("/app/products")} className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-primary/10 rounded-lg group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                    <ShoppingBag className="w-5 h-5 text-primary group-hover:text-current" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">Məhsullar</h4>
+                                    <p className="text-xs text-muted-foreground">Kataloqu idarə edin</p>
+                                </div>
+                            </div>
+                        </div>
+                        {user?.role === "admin" && (
+                            <div onClick={() => navigate("/app/admin/users")} className="p-4 rounded-xl border bg-card hover:border-primary/50 transition-colors cursor-pointer group">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                                        <Users className="w-5 h-5 text-blue-600 group-hover:text-current" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold">Komanda</h4>
+                                        <p className="text-xs text-muted-foreground">İstifadəçiləri idarə edin</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

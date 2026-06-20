@@ -22,6 +22,10 @@ export const protect = async (req, res, next) => {
                     .json({ message: "Not authorized, user not found", status: "fail" });
             }
 
+            if (req.user.status !== "approved") {
+                return res.status(403).json({ message: "Not authorized, account pending approval or rejected", status: "fail" });
+            }
+
             next();
         } catch (error) {
             console.error(error);
@@ -32,10 +36,14 @@ export const protect = async (req, res, next) => {
     }
 };
 
-export const admin = (req, res, next) => {
-    if (req.user && req.user.role === "admin") {
+export const authorizeRoles = (...roles) => {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({
+                message: `User role '${req.user ? req.user.role : 'none'}' is not authorized to access this route`,
+                status: "fail",
+            });
+        }
         next();
-    } else {
-        res.status(403).json({ message: "Not authorized as an admin", status: "fail" });
-    }
+    };
 };

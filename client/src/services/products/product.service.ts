@@ -6,15 +6,18 @@ export interface Product {
   _id: string;
   name: string;
   image?: string;
-  price: number;
-  // Əlavə sahələr varsa bura əlavə edə bilərsiniz (məs: description, category)
+  costPrice: number;
+  salePrice: number;
+  stockCount: number;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface CreateProductDTO {
   name: string;
-  price: number;
+  costPrice: number;
+  salePrice: number;
+  stockCount: number;
   image?: string;
 }
 
@@ -24,6 +27,11 @@ export const productService = {
   // Get all products
   getAll: async () => {
     return await apiClient.get<Product[]>(API_ENDPOINTS.PRODUCTS.BASE);
+  },
+
+  // Get product stats
+  getStats: async () => {
+    return await apiClient.get<any>(`${API_ENDPOINTS.PRODUCTS.BASE}/stats`);
   },
 
   // Get single product

@@ -1,16 +1,19 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import MainLayout from "@/layouts/MainLayout";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Lazy loading optimization
+const Landing = lazy(() => import("@/pages/Landing"));
 const Home = lazy(() => import("@/pages/Home"));
 const Products = lazy(() => import("@/pages/Products"));
 const AddProduct = lazy(() => import("@/pages/AddProduct"));
 const EditProduct = lazy(() => import("@/pages/EditProduct"));
+const AuthLayout = lazy(() => import("@/layouts/AuthLayout"));
 const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const Favorites = lazy(() => import("@/pages/Favorites"));
+const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -20,20 +23,26 @@ const PageLoader = () => (
 );
 
 export const router = createBrowserRouter([
+    // ── PUBLIC: Landing Page ──────────────────────────────────────
     {
         path: "/",
-        element: <MainLayout />,
+        element: (
+            <Suspense fallback={<PageLoader />}>
+                <Landing />
+            </Suspense>
+        ),
+    },
+
+    // ── AUTH: Login / Register ────────────────────────────────────
+    {
+        element: (
+            <Suspense fallback={<PageLoader />}>
+                <AuthLayout />
+            </Suspense>
+        ),
         children: [
             {
-                index: true,
-                element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Home />
-                    </Suspense>
-                ),
-            },
-            {
-                path: "login",
+                path: "/login",
                 element: (
                     <Suspense fallback={<PageLoader />}>
                         <Login />
@@ -41,19 +50,39 @@ export const router = createBrowserRouter([
                 ),
             },
             {
-                path: "register",
+                path: "/register",
                 element: (
                     <Suspense fallback={<PageLoader />}>
                         <Register />
                     </Suspense>
                 ),
             },
+        ],
+    },
+
+    // ── APP: Protected Dashboard (all inside /app) ────────────────
+    {
+        path: "/app",
+        element: <DashboardLayout />,
+        children: [
+            {
+                index: true,
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Home />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
             {
                 path: "products",
                 element: (
-                    <Suspense fallback={<PageLoader />}>
-                        <Products />
-                    </Suspense>
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Products />
+                        </Suspense>
+                    </ProtectedRoute>
                 ),
             },
             {
@@ -69,7 +98,7 @@ export const router = createBrowserRouter([
             {
                 path: "products/new",
                 element: (
-                    <ProtectedRoute adminOnly>
+                    <ProtectedRoute allowedRoles={["admin", "viewer", "owner", "accountant"]}>
                         <Suspense fallback={<PageLoader />}>
                             <AddProduct />
                         </Suspense>
@@ -79,13 +108,29 @@ export const router = createBrowserRouter([
             {
                 path: "products/edit/:id",
                 element: (
-                    <ProtectedRoute adminOnly>
+                    <ProtectedRoute allowedRoles={["admin", "viewer", "owner"]}>
                         <Suspense fallback={<PageLoader />}>
                             <EditProduct />
                         </Suspense>
                     </ProtectedRoute>
                 ),
             },
+            {
+                path: "admin/users",
+                element: (
+                    <ProtectedRoute allowedRoles={["admin"]}>
+                        <Suspense fallback={<PageLoader />}>
+                            <AdminUsers />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
         ],
+    },
+
+    // Catch-all redirect
+    {
+        path: "*",
+        element: <Navigate to="/" replace />,
     },
 ]);

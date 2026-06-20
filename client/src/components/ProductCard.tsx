@@ -77,7 +77,7 @@ export default function ProductCard({ product, onDelete, onToggleFavorite }: Pro
                         </div>
                     )}
                     <Badge className="absolute top-2 right-2 md:top-3 md:right-3 bg-white/95 text-black hover:bg-white shadow-md backdrop-blur text-xs md:text-sm px-2 py-1 md:px-2.5 md:py-1">
-                        {formatPrice(product.price)}
+                        {formatPrice(product.salePrice ?? 0)}
                     </Badge>
                 </div>
             </CardHeader>

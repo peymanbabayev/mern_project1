@@ -41,7 +41,7 @@ export default function Favorites() {
                 <div className="text-center py-20 bg-muted/30 rounded-lg">
                     <p className="text-xl text-muted-foreground mb-4">Hələ heç bir məhsulu bəyənməmisiniz</p>
                     <Button asChild>
-                        <Link to="/products">Məhsullara göz at</Link>
+                        <Link to="/app/products">Məhsullara göz at</Link>
                     </Button>
                 </div>
             ) : (
