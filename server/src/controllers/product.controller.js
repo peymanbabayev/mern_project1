@@ -43,10 +43,18 @@ export const getProductStats = async (req, res) => {
         
         const stats = await Product.aggregate([
             {
+                $project: {
+                    salePriceNum: { $convert: { input: "$salePrice", to: "double", onError: 0, onNull: 0 } },
+                    costPriceNum: { $convert: { input: "$costPrice", to: "double", onError: 0, onNull: 0 } },
+                    stockCountNum: { $convert: { input: "$stockCount", to: "double", onError: 0, onNull: 0 } }
+                }
+            },
+            {
                 $group: {
                     _id: null,
-                    totalSaleValue: { $sum: { $multiply: ["$salePrice", "$stockCount"] } },
-                    totalCostValue: { $sum: { $multiply: ["$costPrice", "$stockCount"] } },
+                    totalSaleValue: { $sum: { $multiply: ["$salePriceNum", { $max: ["$stockCountNum", 1] }] } },
+                    totalCostValue: { $sum: { $multiply: ["$costPriceNum", { $max: ["$stockCountNum", 1] }] } },
+                    avgPrice: { $avg: "$salePriceNum" }
                 }
             }
         ]);
@@ -61,6 +69,7 @@ export const getProductStats = async (req, res) => {
 
         let totalSaleValue = stats.length > 0 ? stats[0].totalSaleValue : 0;
         let totalCostValue = stats.length > 0 ? stats[0].totalCostValue : 0;
+        let avgPrice = stats.length > 0 ? stats[0].avgPrice : 0;
         
         let data = {
             totalProducts,
@@ -73,6 +82,8 @@ export const getProductStats = async (req, res) => {
         }
         if (["admin", "viewer", "owner", "accountant", "sales_manager"].includes(role)) {
              data.totalSaleValue = totalSaleValue;
+             data.totalValue = totalSaleValue; // Frontend expects totalValue
+             data.avgPrice = avgPrice; // Exact average from DB
         }
 
         res.status(200).json({ status: "success", data });

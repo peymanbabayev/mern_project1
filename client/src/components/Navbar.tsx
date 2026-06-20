@@ -34,11 +34,11 @@ export default function Navbar() {
                     </Link>
                     {user?.role === "admin" && (
                         <>
-                            <Link to="/products/new" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
+                            <Link to="/app/products/new" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
                                 <PlusCircle className="w-4 h-4" />
                                 Yeni Məhsul
                             </Link>
-                            <Link to="/admin/users" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
+                            <Link to="/app/admin/users" className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2">
                                 <Users className="w-4 h-4" />
                                 Admin Panel
                             </Link>

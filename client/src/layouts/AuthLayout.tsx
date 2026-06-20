@@ -48,6 +48,7 @@ export default function AuthLayout() {
                             rotate: [0, 5, 0]
                         }}
                         transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                        style={{ willChange: "transform" }}
                         className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-primary/20 blur-3xl mix-blend-screen"
                     />
                     <motion.div 
@@ -56,6 +57,7 @@ export default function AuthLayout() {
                             rotate: [0, -5, 0]
                         }}
                         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        style={{ willChange: "transform" }}
                         className="absolute bottom-[10%] -right-[20%] w-[60%] h-[60%] rounded-full bg-blue-500/20 blur-3xl mix-blend-screen"
                     />
                 </div>
@@ -70,10 +72,11 @@ export default function AuthLayout() {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname + "-left"}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        exit={{ opacity: 0, y: -15 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        style={{ willChange: "transform, opacity" }}
                         className="relative z-10 max-w-md"
                     >
                         <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6 text-white drop-shadow-sm">
@@ -88,9 +91,10 @@ export default function AuthLayout() {
                                 <motion.div 
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.2 + (i * 0.1) }}
+                                    transition={{ delay: 0.1 + (i * 0.1) }}
                                     key={i} 
-                                    className="flex items-center gap-4 text-sidebar-foreground/90 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm"
+                                    style={{ willChange: "transform, opacity" }}
+                                    className="flex items-center gap-4 text-sidebar-foreground/90 bg-white/5 p-3 rounded-xl border border-white/10"
                                 >
                                     <div className="bg-white/10 p-2 rounded-lg">
                                         {f.icon}
@@ -108,7 +112,7 @@ export default function AuthLayout() {
             </div>
 
             {/* Right Panel - Form Outlet */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative overflow-y-auto bg-background/50 backdrop-blur-3xl">
+            <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 relative overflow-y-auto bg-background/95">
                 {/* Mobile Logo */}
                 <div className="absolute top-8 left-8 flex lg:hidden items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
                     <ShoppingBag className="w-6 h-6 text-primary" />
@@ -119,10 +123,11 @@ export default function AuthLayout() {
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={location.pathname + "-right"}
-                            initial={{ opacity: 0, x: 20, filter: "blur(4px)" }}
-                            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                            exit={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
+                            initial={{ opacity: 0, x: 15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -15 }}
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            style={{ willChange: "transform, opacity" }}
                             className="w-full"
                         >
                             <Outlet />

@@ -24,7 +24,8 @@ export default function EditProduct() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["products"] });
             queryClient.invalidateQueries({ queryKey: ["product", id] });
-            navigate("/products");
+            queryClient.invalidateQueries({ queryKey: ["productStats"] });
+            navigate("/app/products");
         },
         onError: (error) => {
             console.error("Error updating product:", error);
@@ -64,7 +65,9 @@ export default function EditProduct() {
             <ProductForm
                 defaultValues={{
                     name: product.name,
-                    price: product.price,
+                    costPrice: product.costPrice,
+                    salePrice: product.salePrice,
+                    stockCount: product.stockCount,
                     image: product.image,
                 }}
                 onSubmit={(data) => mutation.mutate(data)}

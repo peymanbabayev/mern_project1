@@ -57,7 +57,7 @@ export default function Home() {
                 </div>
                 {user?.role === "admin" && (
                     <Button className="relative z-10 shadow-md" asChild>
-                        <Link to="/products/new">
+                        <Link to="/app/products/new">
                             <PlusCircle className="w-4 h-4 mr-2" />
                             Yeni Məhsul
                         </Link>
@@ -89,7 +89,9 @@ export default function Home() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{formatCurrency(statsData?.totalValue)}</div>
+                        <div className="text-2xl font-bold">
+                            {statsData?.totalValue !== undefined ? formatCurrency(statsData.totalValue) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">Bütün aktiv məhsullar</p>
                     </CardContent>
                 </Card>
@@ -101,7 +103,9 @@ export default function Home() {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{formatCurrency(statsData?.avgPrice)}</div>
+                        <div className="text-2xl font-bold">
+                            {statsData?.avgPrice !== undefined ? formatCurrency(statsData.avgPrice) : <span className="text-lg text-muted-foreground italic">Gizli</span>}
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">Kataloq üzrə</p>
                     </CardContent>
                 </Card>
@@ -143,7 +147,7 @@ export default function Home() {
                                     <thead className="text-xs text-muted-foreground bg-muted/30 uppercase">
                                         <tr>
                                             <th className="px-6 py-4 font-medium">Məhsul</th>
-                                            <th className="px-6 py-4 font-medium">Qiymət</th>
+                                            <th className="px-6 py-4 font-medium">Satış Qiyməti</th>
                                             <th className="px-6 py-4 font-medium">Tarix</th>
                                             <th className="px-6 py-4 font-medium text-right">Status</th>
                                         </tr>
@@ -163,7 +167,7 @@ export default function Home() {
                                                         <span className="font-medium text-foreground">{product.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 font-medium">{formatCurrency(product.price)}</td>
+                                                <td className="px-6 py-4 font-medium text-primary">{formatCurrency(product.salePrice ?? 0)}</td>
                                                 <td className="px-6 py-4 text-muted-foreground flex items-center gap-2">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {new Date(product.createdAt).toLocaleDateString('az-AZ')}

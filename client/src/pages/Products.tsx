@@ -30,7 +30,10 @@ export default function Products() {
     // Delete Mutation
     const deleteMutation = useMutation({
         mutationFn: productService.delete,
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["products"] }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            queryClient.invalidateQueries({ queryKey: ["productStats"] });
+        },
         onError: (err) => alert("Silinmə zamanı xəta baş verdi: " + err),
     });
 
@@ -149,9 +152,19 @@ export default function Products() {
                                         Məhsul Adı <ArrowUpDown className="h-3 w-3" />
                                     </div>
                                 </th>
-                                <th className="px-6 py-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort('price')}>
+                                <th className="px-6 py-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort('costPrice')}>
                                     <div className="flex items-center gap-1">
-                                        Qiymət <ArrowUpDown className="h-3 w-3" />
+                                        Maya Dəyəri <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort('salePrice')}>
+                                    <div className="flex items-center gap-1">
+                                        Satış Qiyməti <ArrowUpDown className="h-3 w-3" />
+                                    </div>
+                                </th>
+                                <th className="px-6 py-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort('stockCount')}>
+                                    <div className="flex items-center gap-1">
+                                        Stok <ArrowUpDown className="h-3 w-3" />
                                     </div>
                                 </th>
                                 <th className="px-6 py-4 font-medium text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors" onClick={() => handleSort('createdAt')}>
@@ -177,7 +190,19 @@ export default function Products() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4 font-medium text-foreground">{product.name}</td>
-                                        <td className="px-6 py-4 font-semibold">{formatCurrency(product.price)}</td>
+                                        <td className="px-6 py-4 font-medium text-muted-foreground">{formatCurrency(product.costPrice ?? 0)}</td>
+                                        <td className="px-6 py-4 font-semibold text-primary">{formatCurrency(product.salePrice ?? 0)}</td>
+                                        <td className="px-6 py-4 font-medium">
+                                            {product.stockCount ? (
+                                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                                    {product.stockCount} ədəd
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                                                    Bitib (0)
+                                                </span>
+                                            )}
+                                        </td>
                                         <td className="px-6 py-4 text-muted-foreground">
                                             {product.createdAt ? new Date(product.createdAt).toLocaleDateString('az-AZ') : 'Tarix yoxdur'}
                                         </td>
