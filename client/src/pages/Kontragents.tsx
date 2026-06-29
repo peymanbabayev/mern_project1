@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Search, Trash2, Edit, Users, Building2, UserCheck, Filter, ChevronLeft, ChevronRight, X, Phone, Mail, MapPin, Hash } from "lucide-react";
+import { Plus, Search, Trash2, Edit, Users, Building2, UserCheck, Filter, ChevronLeft, ChevronRight, X, Phone, Mail, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { kontragentService, Kontragent, CreateKontragentPayload } from "@/services/kontragent/kontragent.service";
+import { kontragentService, type CreateKontragentPayload, type Kontragent } from "@/services/kontragent/kontragent.service";
 
 const KONTRAGENT_TYPES = [
   { value: "all", label: "Hamısı" },

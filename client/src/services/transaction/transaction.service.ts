@@ -1,4 +1,4 @@
-import { apiClient, ApiResponse } from "@/services/api/client";
+import { apiClient, type ApiResponse } from "@/services/api/client";
 import { API_ENDPOINTS } from "@/services/api/endpoints";
 
 export interface TransactionItem {
