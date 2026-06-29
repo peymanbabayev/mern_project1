@@ -14,7 +14,7 @@ export const protect = async (req, res, next) => {
 
             const decoded = jwt.verify(token, config.jwt.secret);
 
-            req.user = await User.findById(decoded.id).select("-password");
+            req.user = await User.findById(decoded.id).select("-password").populate("company", "_id name");
 
             if (!req.user) {
                 return res
@@ -24,6 +24,13 @@ export const protect = async (req, res, next) => {
 
             if (req.user.status !== "approved") {
                 return res.status(403).json({ message: "Not authorized, account pending approval or rejected", status: "fail" });
+            }
+
+            // Normalize company to ObjectId for easy use in controllers
+            if (req.user.company && req.user.company._id) {
+                req.user.companyId = req.user.company._id;
+            } else {
+                req.user.companyId = req.user.company;
             }
 
             next();
@@ -38,6 +45,11 @@ export const protect = async (req, res, next) => {
 
 export const authorizeRoles = (...roles) => {
     return (req, res, next) => {
+        // DEMO REQUIREMENT: admin and viewer have full access
+        if (req.user && (req.user.role === 'admin' || req.user.role === 'viewer')) {
+            return next();
+        }
+
         if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({
                 message: `User role '${req.user ? req.user.role : 'none'}' is not authorized to access this route`,

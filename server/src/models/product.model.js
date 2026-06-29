@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+    },
     name: {
       type: String,
       required: true,
@@ -31,6 +35,10 @@ const productSchema = new mongoose.Schema(
       }
     ],
     image: {
+      type: String,
+      required: false,
+    },
+    notes: {
       type: String,
       required: false,
     },

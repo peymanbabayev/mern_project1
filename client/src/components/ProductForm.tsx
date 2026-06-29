@@ -27,6 +27,7 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
     const [costPrice, setCostPrice] = useState(defaultValues?.costPrice?.toString() || "");
     const [salePrice, setSalePrice] = useState(defaultValues?.salePrice?.toString() || "");
     const [stockCount, setStockCount] = useState(defaultValues?.stockCount?.toString() || "");
+    const [notes, setNotes] = useState(defaultValues?.notes || "");
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(getProductImageUrl(defaultValues?.image));
     const [isDragging, setIsDragging] = useState(false);
@@ -81,6 +82,7 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
         formData.append("costPrice", costPrice);
         formData.append("salePrice", salePrice);
         formData.append("stockCount", stockCount);
+        if (notes) formData.append("notes", notes);
 
         if (imageFile) formData.append("image", imageFile);
 
@@ -221,6 +223,18 @@ export default function ProductForm({ defaultValues, onSubmit, isLoading, button
                                 onChange={(e) => setStockCount(e.target.value)}
                                 required
                                 className="bg-background"
+                            />
+                        </div>
+
+                        {/* Notes Input */}
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="notes">Qeyd (Anbardar üçün)</Label>
+                            <textarea
+                                id="notes"
+                                placeholder="Məhsul haqqında əlavə qeydlər..."
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             />
                         </div>
                     </div>
