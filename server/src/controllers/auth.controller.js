@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Company from "../models/company.model.js";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 
@@ -24,13 +25,27 @@ export const register = async (req, res) => {
         const assignedRole = role || "viewer";
         const assignedStatus = assignedRole === "viewer" ? "approved" : "pending";
 
+        // Viewers get their own fresh company; other roles join the Main Company
+        let companyId;
+        if (assignedRole === "viewer") {
+            const newCompany = await Company.create({ name: `${name}'s Company` });
+            companyId = newCompany._id;
+        } else {
+            let mainCompany = await Company.findOne({ name: "Main Company" });
+            if (!mainCompany) {
+                mainCompany = await Company.create({ name: "Main Company" });
+            }
+            companyId = mainCompany._id;
+        }
+
         const user = await User.create({
             name,
             username,
             email,
             password,
-            role: assignedRole,
-            status: assignedStatus
+            role: assignedRole === "viewer" ? "owner" : assignedRole,
+            status: assignedStatus,
+            company: companyId
         });
 
         if (user) {
@@ -47,7 +62,8 @@ export const register = async (req, res) => {
                     username: user.username,
                     email: user.email,
                     role: user.role,
-                    status: user.status
+                    status: user.status,
+                    company: user.company
                 },
             });
         } else {
@@ -64,7 +80,7 @@ export const login = async (req, res) => {
     try {
         console.log(`[LOGIN ATTEMPT] Email: ${email}`);
         // Yalnız lazım olan sahələri seç (performance optimization)
-        const user = await User.findOne({ email }).select('+password'); // password default olaraq exclude olunur
+        const user = await User.findOne({ email }).select('+password').populate('company', 'name'); // password default olaraq exclude olunur
 
         if (!user) {
             console.log("[LOGIN FAILED] User not found");
@@ -89,6 +105,7 @@ export const login = async (req, res) => {
                     email: user.email,
                     role: user.role,
                     status: user.status,
+                    company: user.company,
                     favorites: user.favorites,
                     token: generateToken(user._id),
                 },
@@ -109,6 +126,7 @@ export const getMe = async (req, res) => {
         // .select() - Password-u exclude edir
         const user = await User.findById(req.user._id)
             .select('-password') // Password-u göndərmə
+            .populate('company', 'name')
             .populate({
                 path: 'favorites',
                 select: 'name price image' // Favorites-də yalnız lazım olan sahələr

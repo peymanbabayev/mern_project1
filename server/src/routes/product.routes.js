@@ -20,7 +20,7 @@ const productRoutes = express.Router();
 productRoutes.get("/stats", protect, getProductStats);
 
 // POST /api/products - Create new product
-productRoutes.post("/", protect, authorizeRoles("admin", "viewer", "owner", "accountant"), upload.single("image"), createProduct);
+productRoutes.post("/", protect, authorizeRoles("admin", "viewer", "owner", "accountant", "warehouse"), upload.single("image"), createProduct);
 
 // GET /api/products - Get all products
 productRoutes.get("/", protect, getAllProducts);
@@ -41,7 +41,7 @@ productRoutes.put("/:id/approve-price/:proposalId", protect, authorizeRoles("adm
 productRoutes.put("/:id/stock", protect, authorizeRoles("admin", "viewer", "owner", "warehouse", "purchasing"), updateStock);
 
 // PUT /api/products/:id - Update product (general info like name, image)
-productRoutes.put("/:id", protect, authorizeRoles("admin", "viewer", "owner"), upload.single("image"), updateProduct);
+productRoutes.put("/:id", protect, authorizeRoles("admin", "viewer", "owner", "warehouse"), upload.single("image"), updateProduct);
 
 // DELETE /api/products/:id - Delete product
 productRoutes.delete("/:id", protect, authorizeRoles("admin", "viewer", "owner"), deleteProduct);

@@ -14,6 +14,11 @@ const Login = lazy(() => import("@/pages/Login"));
 const Register = lazy(() => import("@/pages/Register"));
 const Favorites = lazy(() => import("@/pages/Favorites"));
 const AdminUsers = lazy(() => import("@/pages/AdminUsers"));
+// ERP Modules
+const Kontragents = lazy(() => import("@/pages/Kontragents"));
+const Transactions = lazy(() => import("@/pages/Transactions"));
+const Warehouses = lazy(() => import("@/pages/Warehouses"));
+const Tasks = lazy(() => import("@/pages/Tasks"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -121,6 +126,47 @@ export const router = createBrowserRouter([
                     <ProtectedRoute allowedRoles={["admin"]}>
                         <Suspense fallback={<PageLoader />}>
                             <AdminUsers />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            // ── ERP MODULES ──────────────────────────────────────────────
+            {
+                path: "kontragents",
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Kontragents />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "transactions",
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Transactions />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "warehouses",
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Warehouses />
+                        </Suspense>
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "tasks",
+                element: (
+                    <ProtectedRoute>
+                        <Suspense fallback={<PageLoader />}>
+                            <Tasks />
                         </Suspense>
                     </ProtectedRoute>
                 ),
