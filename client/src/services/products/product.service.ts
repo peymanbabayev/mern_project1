@@ -14,11 +14,12 @@ export interface Product {
 }
 
 export interface CreateProductDTO {
-  name: string;
-  costPrice: number;
-  salePrice: number;
-  stockCount: number;
-  image?: string;
+    name: string;
+    costPrice: number;
+    salePrice: number;
+    stockCount: number;
+    notes?: string;
+    image?: string;
 }
 
 export interface UpdateProductDTO extends Partial<CreateProductDTO> {}

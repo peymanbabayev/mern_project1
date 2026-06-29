@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { 
     Menu, X, Package, PlusCircle, Heart, LogOut, Users, 
-    ChevronLeft, Bell, Search, LayoutDashboard
+    ChevronLeft, Bell, Search, LayoutDashboard, 
+    UserRound, ArrowRightLeft, Warehouse
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -60,6 +61,12 @@ export default function DashboardLayout() {
         ...(user?.role === "admin" || user?.role === "viewer" || user?.role === "owner" || user?.role === "accountant" ? [
             { path: "/app/products/new", label: "Yeni Məhsul", icon: <PlusCircle className="w-5 h-5" /> },
         ] : []),
+        // ── ERP Modules (visible to all logged in users) ──
+        { path: "/app/kontragents", label: "Kontragentlər", icon: <UserRound className="w-5 h-5" /> },
+        { path: "/app/transactions", label: "Qaimələr", icon: <ArrowRightLeft className="w-5 h-5" /> },
+        { path: "/app/warehouses", label: "Anbarlar", icon: <Warehouse className="w-5 h-5" /> },
+        { path: "/app/tasks", label: "Tapşırıqlar", icon: <Bell className="w-5 h-5" /> },
+        // ── Admin ──
         ...(user?.role === "admin" ? [
             { path: "/app/admin/users", label: "İstifadəçilər", icon: <Users className="w-5 h-5" /> }
         ] : []),

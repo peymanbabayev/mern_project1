@@ -6,6 +6,10 @@ import connectDB from "./config/db.js";
 import productRoutes from "./routes/product.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import kontragentRoutes from "./routes/kontragent.routes.js";
+import transactionRoutes from "./routes/transaction.routes.js";
+import warehouseRoutes from "./routes/warehouse.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 
 // Validate configuration
 validateConfig();
@@ -31,7 +35,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {next()});
-app.use("/uploads", express.static(config.upload.uploadDir)); // Make uploads folder public
+app.use("/uploads", express.static(config.upload.uploadDir));
 
 // Routes
 app.get("/", (req, res) => {
@@ -44,6 +48,12 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 // Products routes
 app.use("/api/products", productRoutes);
+
+// ERP Modules
+app.use("/api/kontragents", kontragentRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/warehouses", warehouseRoutes);
+app.use("/api/tasks", taskRoutes);
 
 // 404 Not Found
 app.use((req, res) => {

@@ -23,7 +23,8 @@ const filterProductForRole = (product, role) => {
 
 export const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find()
+        const companyId = req.user.companyId;
+        const products = await Product.find({ company: companyId })
             .sort({ createdAt: -1 })
             .lean();
 
@@ -32,14 +33,15 @@ export const getAllProducts = async (req, res) => {
 
         res.status(200).json({ status: "success", message: "Products fetched successfully", data: filteredProducts });
     } catch (error) {
-        console.error("Məhsulları alırken xəta:", error.message);
+        console.error("Məhsulları alırkən xəta:", error.message);
         res.status(500).json({ status: "error", message: "Server xətası" });
     }
 };
 
 export const getProductStats = async (req, res) => {
     try {
-        const totalProducts = await Product.countDocuments();
+        const companyId = req.user.companyId;
+        const totalProducts = await Product.countDocuments({ company: companyId });
         
         const stats = await Product.aggregate([
             {
@@ -59,7 +61,7 @@ export const getProductStats = async (req, res) => {
             }
         ]);
 
-        const recentProducts = await Product.find()
+        const recentProducts = await Product.find({ company: companyId })
             .sort({ createdAt: -1 })
             .limit(5)
             .lean();
@@ -101,7 +103,8 @@ export const getProductById = async (req, res) => {
     }
 
     try {
-        const product = await Product.findById(id).lean();
+        const companyId = req.user.companyId;
+        const product = await Product.findOne({ _id: id, company: companyId }).lean();
 
         if (!product) {
             return res.status(404).json({ status: "error", message: "Product not found" });
@@ -118,7 +121,7 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
-        const { name, costPrice, salePrice, stockCount } = req.body;
+        const { name, costPrice, salePrice, stockCount, notes } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ success: false, message: "Şəkil yüklənməlidir" });
@@ -136,7 +139,9 @@ export const createProduct = async (req, res) => {
             costPrice: Number(costPrice) || 0, 
             salePrice: Number(salePrice) || 0, 
             stockCount: Number(stockCount) || 0, 
-            image: imageUrl 
+            notes: notes || "",
+            image: imageUrl,
+            company: req.user.companyId
         });
         
         res.status(201).json({ status: "success", message: "Product created successfully", data: filterProductForRole(product.toObject(), req.user.role) });
@@ -243,13 +248,14 @@ export const updateStock = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
-    const { name } = req.body; // Admin, viewer, owner can update name and image via this generic route
+    const { name, notes } = req.body; // Admin, viewer, owner, warehouse can update name, notes and image via this generic route
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ status: "error", message: "Invalid product ID" });
 
     try {
         let updateData = {};
         if (name) updateData.name = name;
+        if (notes !== undefined) updateData.notes = notes;
 
         if (req.file) {
             const cloudinaryResult = await uploadToCloudinary(req.file.buffer);

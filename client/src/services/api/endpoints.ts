@@ -29,4 +29,29 @@ export const API_ENDPOINTS = {
     USER_STATUS: (id: string) => `${API_BASE_URL}/user/${id}/status`,
     USER_ROLE: (id: string) => `${API_BASE_URL}/user/${id}/role`,
   },
+
+  // ERP: KONTRAGENT
+  KONTRAGENTS: {
+    BASE: `${API_BASE_URL}/kontragents`,
+    BY_ID: (id: string) => `${API_BASE_URL}/kontragents/${id}`,
+  },
+
+  // ERP: TRANSACTIONS
+  TRANSACTIONS: {
+    BASE: `${API_BASE_URL}/transactions`,
+    BY_ID: (id: string) => `${API_BASE_URL}/transactions/${id}`,
+  },
+
+  // ERP: WAREHOUSE
+  WAREHOUSES: {
+    BASE: `${API_BASE_URL}/warehouses`,
+    BY_ID: (id: string) => `${API_BASE_URL}/warehouses/${id}`,
+    INVENTORY: (id: string) => `${API_BASE_URL}/warehouses/${id}/inventory`,
+  },
+
+  // ERP: TASKS
+  TASKS: {
+    BASE: `${API_BASE_URL}/tasks`,
+    COMPLETE: (id: string) => `${API_BASE_URL}/tasks/${id}/complete`,
+  },
 };
